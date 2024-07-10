@@ -7,22 +7,9 @@ Be creative! do whatever you want!
 - Start a web application
 - Import things from your .base module
 """
-
+from . import utils
 
 def main():  # pragma: no cover
-    """
-    The main function executes on commands:
-    `python -m hiddifypanel_bot` and `$ hiddifypanel_bot `.
-
-    This is your program's entry point.
-
-    You can change this function to do whatever you want.
-    Examples:
-        * Run a test suite
-        * Run a server
-        * Do some other stuff
-        * Run a command line application (Click, Typer, ArgParse)
-        * List all available tasks
-        * Run an application (Flask, FastAPI, Django, etc.)
-    """
-    print("This will do something")
+    utils.setup_translation()
+    import i18n
+    print(i18n.t("start",locale='fa'))

@@ -1,0 +1,1 @@
+from .translation import setup_translation
