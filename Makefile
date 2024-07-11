@@ -120,3 +120,5 @@ init:             ## Initialize the project based on an application template.
 # __author__ = 'rochacbruno'
 # __repo__ = https://github.com/rochacbruno/python-project-template
 # __sponsor__ = https://github.com/sponsors/rochacbruno/
+
+
