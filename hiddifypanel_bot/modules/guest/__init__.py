@@ -1,1 +1,2 @@
-import welcome
+from . import welcome
+from . import invalid

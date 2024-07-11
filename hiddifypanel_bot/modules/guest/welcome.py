@@ -3,7 +3,7 @@ from hiddifypanel_bot.utils import tghelper
 import telebot
 from i18n import t as _
 
-@bot.message_handler(db={'role':Role.UNKNOWN})
+@bot.message_handler(role=Role.UNKNOWN)
 def send_welcome(msg:HMessage):
     
     text = _('start',msg.lang)
