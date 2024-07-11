@@ -5,10 +5,18 @@
         "open_sublink": "Open Sublink",
         "update": "Update"
     },
-
-    "userinfo_admin_started":"Name: ${name}\nUsage Limit: ${usage_limit_GB} GB\nCurrent Usage: ${current_usage_GB} GB\nLast Online: ${online_icon} ${last_online_relative}\nPackage Days: ${package_days}\nStart Date: ${start_date_relative}",    
-    "userinfo_admin_notstarted":"Name: ${name}\nUsage Limit: ${usage_limit} GB\nCurrent Usage: ${current_usage} GB\nLast Online: ${online_icon} ${last_online}\nPackage Days: ${package_days}\nStart Date: ${start_date}",
-    "start": "Welcome to the Hiddify bot.\n Use the menu below to manage.",
+    "inline":{
+        "user_response":"Name ${user_name}\nPackage Days: ${package_days}\nTraffic: ${current_usage_GB} / ${usage_limit_GB} GB\n"
+    },
+    "admin":{
+        "start": "Welcome to the Hiddify bot.\n Use the menu below to manage.",
+        "search_user":"Search User",
+        "add_user":"Add User",
+        "server_info":"Server Info",
+        "admin_users":"Admins",
+        "userinfo_started":"Name: ${name}\nUsage Limit: ${usage_limit_GB} GB\nCurrent Usage: ${current_usage_GB} GB\nLast Online: ${online_icon} ${last_online_relative}\nPackage Days: ${package_days}\nStart Date: ${start_date_relative}",    
+        "userinfo_notstarted":"Name: ${name}\nUsage Limit: ${usage_limit} GB\nCurrent Usage: ${current_usage} GB\nLast Online: ${online_icon} ${last_online}\nPackage Days: ${package_days}\nStart Date: ${start_date}"
+    },
     "unauthorized": "You do not have permission to use this bot.",
     "authorized": "Unauthorized",
     "error": "Your request cannot be executed",
@@ -25,7 +33,6 @@
     "addgb": "Enter user data amount:",
     "help": "Help",
     "helpme": "To find out your user info, you need to enter your user UUID after clicking the Show User button and wait for the information to be displayed.",
-    "admin": "Admin",
     "addadmin": "Add",
     "showadmin": "Show",
     "deleteadmin": "Delete",
