@@ -51,14 +51,16 @@ class DataStorage:
     def __init__(self, user_id, chat_id):
         self.user_id = user_id
         self.chat_id = chat_id
-        if not self.get_state():  # make sure that data exist
-            self.set_state("init")
+        if not self.state:  # make sure that data exist
+            self.state="init"
 
-    def get_state(self):
+    @property
+    def state(self)->str:
         return bot.get_state(self.user_id, self.chat_id)
+    @state.setter
+    def state(self, state: str):
+        bot.set_state(self.user_id, state, self.chat_id)
 
-    def set_state(self, state):
-        return bot.set_state(self.user_id, state, self.chat_id)
 
     def __getitem__(self, key):
         """Retrieve a value from the data storage by key using the [] syntax."""
@@ -76,49 +78,62 @@ class DataStorage:
     def set(self,**kwargs):
         bot.add_data(self.user_id, self.chat_id, **kwargs)
 
-
-class HMessage(types.Message):
+class BaseHMessage:
     hapi: HiddifyApi
     db: DataStorage
     chat_id: int
     user_id: int
     role:Role
     lang: str
-    @property
-    def state(self)->str:
-        return self.storage.get_state()
-    @state.setter
-    def state(self, value: str):
-        self.storage.set_state(value)
+
+class HMessage(types.Message,BaseHMessage):
+    pass
 
 class HCallbackQuery(types.CallbackQuery):
     message:HMessage
 
+class HInlineQuery(types.InlineQuery,BaseHMessage):
+    pass
+
 class Middleware(handler_backends.BaseMiddleware):
     def __init__(self):
-        self.update_types = ["message","callback_query"]
+        self.update_types = ['message', 'edited_message', 'channel_post', 'edited_channel_post', 'inline_query', 'chosen_inline_result', 'callback_query', 'shipping_query', 'pre_checkout_query', 'poll', 'poll_answer', 'my_chat_member', 'chat_member', 'chat_join_request', 'message_reaction', 'message_reaction_count', 'chat_boost', 'removed_chat_boost', 'business_connection', 'business_message', 'edited_business_message', 'deleted_business_messages']
         pass
-
-    def pre_process(self, obj:Message|types.CallbackQuery, data):
+    def set_basic_elements(self,obj, data):
+        user_id=chat_id=deflang=None
+        base=obj
         if isinstance(obj, types.CallbackQuery):
-            message=obj.message
-            message.chat_id = message.chat.id
-            message.user_id = obj.from_user.id
+            if not obj.message:
+                return
+            base=obj.message
+
+            chat_id = base.chat.id
+            user_id = obj.from_user.id
+            deflang=base.from_user.language_code
+        elif isinstance(obj, types.InlineQuery):
+            user_id=obj.from_user.id
+            deflang=obj.from_user.language_code
+            base=obj
         else:
-            message=obj
-            message.chat_id = message.chat.id
-            message.user_id = message.from_user.id
-        
+            base=obj
+            chat_id = base.chat.id
+            user_id = base.from_user.id
+            deflang=base.from_user.language_code
+        base.chat_id=chat_id
+        base.user_id=user_id
         # data['lang']="en"
-        db=DataStorage(message.user_id, message.chat_id)
+        base.db=db=DataStorage(user_id, chat_id)
         lang=db['lang']
         if not lang:
-            lang=db['lang']=message.from_user.language_code
-        
-        message.role=db['role']
-
-        if message and message.text and message.text.startswith("/start"):
-            params = message.text.split()
+            lang=db['lang']=deflang
+        base.lang=lang
+        base.role=db['role']
+        self.set_hapi(base)
+        return base
+    def set_user_data(self,base):
+        db=base.db
+        if isinstance(base,Message) and base.text and base.text.startswith("/start"):
+            params = base.text.split()
             try:
                 if len(params)>=2 and "admin" in params[1]:
                     uid = params[1].split("_")[1] 
@@ -130,27 +145,35 @@ class Middleware(handler_backends.BaseMiddleware):
                     if role=='super_admin':role=Role.SUPER_ADMIN
                     if role=='admin':role=Role.ADMIN
                     if role=='agent':role=Role.AGENT
-                    message.role=db['role']=role
+                    db['admin_link']=f'{HIDDIFYPANEL_ADMIN_LINK.lstrip("/")}/{uid}/'
+                    base.role=db['role']=role
                 elif len(params)>=2:
                     uid=params[1]
-                    message.hapi = HiddifyApi(HIDDIFYPANEL_USER_LINK, uid)
-                    db['info']=message.hapi.get_user_info()
+                    base.hapi = HiddifyApi(HIDDIFYPANEL_USER_LINK, uid)
+                    db['info']=base.hapi.get_user_info()
                     db['guid']=uid
-                    message.role=db['role'] = Role.USER
+                    base.role=db['role'] = Role.USER
             except Exception as e:
                 logger.error(e)
                 db['guid']=""
-                message.role=db['role'] = Role.UNKNOWN
-                
-        if message.role in [Role.SUPER_ADMIN,Role.ADMIN,Role.AGENT]:
-            message.hapi = HiddifyApi(HIDDIFYPANEL_ADMIN_LINK, db['guid'])           
+                base.role=db['role'] = Role.UNKNOWN
+            self.set_hapi(base)
+    def set_hapi(self,base):
+        if base.role in [Role.SUPER_ADMIN,Role.ADMIN,Role.AGENT]:
+            base.hapi = HiddifyApi(HIDDIFYPANEL_ADMIN_LINK, base.db['guid'])           
         else:
-            message.hapi = HiddifyApi(HIDDIFYPANEL_USER_LINK, db['guid'])
-        message.db=db
-        message.lang=lang
-        bot.send_chat_action(message.chat_id,"typing")
-        from .utils import tghelper
-        tghelper.set_reaction(message)
+            base.hapi = HiddifyApi(HIDDIFYPANEL_USER_LINK, base.db['guid'])
+
+    def pre_process(self, obj, data):
+        base=self.set_basic_elements(obj,data)
+        if not base:return
+        self.set_user_data(base)
+        
+        if base.chat_id:
+            bot.send_chat_action(base.chat_id,"typing")
+        if isinstance(obj,Message):
+            from .utils import tghelper
+            tghelper.set_reaction(base)
 
     def post_process(self, message, data, exception):
         pass
@@ -169,12 +192,19 @@ class StorageFilter(custom_filters.AdvancedCustomFilter):
 
     key = 'db'
 
-    def check(self, message:HMessage, val):
+    def check(self, obj, val):
         """
         :meta private:
         """
+        if isinstance(obj,Message):
+            message=obj
+        elif hasattr(obj,'message'):
+            message=obj.message
+        else:
+            return 
         if not isinstance(val, dict):
             raise ValueError("Invalid Usage")
+        
         storage=message.db
         for k,v in val.items():    
             l=v if isinstance(v, list) else [v]
@@ -190,7 +220,56 @@ class StorageFilter(custom_filters.AdvancedCustomFilter):
                         return data==filter
         return False
     
+    
+class RoleFilter(StorageFilter):
+    """
+    Filter to check Text message.
+
+    .. code-block:: python3
+        :caption: Example on using this filter:
+
+        @bot.message_handler(text=['account'])
+        # your function
+    """
+
+    key = 'role'
+
+    def check(self, obj, val):
+        data={Role.USER}
+        if val==Role.SUPER_ADMIN:
+            data={Role.SUPER_ADMIN}
+        elif val==Role.ADMIN:
+            data={Role.SUPER_ADMIN,Role.ADMIN}
+        elif val==Role.AGENT:
+            data={Role.SUPER_ADMIN,Role.ADMIN,Role.AGENT}
+        return super().check(obj,{"role":data})
+            
+        
+
+class CallbackMatchFilter(custom_filters.AdvancedCustomFilter):
+    
+
+    key = 'call_action'
+
+    def check(self, obj, val):
+        if not isinstance(obj,types.CallbackQuery):
+            return
+        if not obj.data:return
+        action= obj.data.split(":")[0]
+        if isinstance(val ,list) or isinstance(val ,set):
+            return action in val
+        return action==val
+
+def callback(func=None,**kwargs):
+    if func is None: func=lambda call:True
+    return bot.callback_query_handler_orig(func,**kwargs)
+bot.callback_query_handler_orig=bot.callback_query_handler
+bot.callback_query_handler=callback
+
 bot.add_custom_filter(custom_filters.StateFilter(bot))
 bot.add_custom_filter(StorageFilter())
+bot.add_custom_filter(custom_filters.TextMatchFilter())
+bot.add_custom_filter(CallbackMatchFilter())
+bot.add_custom_filter(RoleFilter())
 
 bot.setup_middleware(Middleware())
