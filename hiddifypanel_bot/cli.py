@@ -14,6 +14,12 @@ def main():  # pragma: no cover
     utils.setup_translation()
     # import i18n
     # print(i18n.t("start",locale='fa'))
-    # asyncio.run(basebot.bot.polling(restart_on_change=True))
-    asyncio.run(basebot.bot.polling())
+    import sys
+    if hasattr(sys, 'gettrace') and sys.gettrace() is not None: #is debug mode
+        asyncio.run(basebot.bot.polling())      
+    else:
+        try:
+            asyncio.run(basebot.bot.polling(restart_on_change=True))  
+        except:
+            asyncio.run(basebot.bot.polling())  
     
