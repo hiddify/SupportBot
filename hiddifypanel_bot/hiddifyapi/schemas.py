@@ -1,5 +1,5 @@
+from typing import TypedDict, Optional, Literal, Dict, Union, List
 
-from typing import TypedDict, Optional, Literal,Dict,Union,List
 
 class UserInfo(TypedDict):
     admin_message_html: str
@@ -20,16 +20,13 @@ class UserInfo(TypedDict):
     telegram_proxy_enable: bool
 
 
-
-
-
 class AdminInfo(TypedDict):
     can_add_admin: bool
     comment: str
     lang: str
     max_active_users: int
     max_users: int
-    mode: Literal['super_admin', 'admin', 'agent']  # Assuming these are the possible modes
+    mode: Literal["super_admin", "admin", "agent"]  # Assuming these are the possible modes
     name: str
     parent_admin_uuid: Optional[str]
     telegram_id: int
@@ -45,7 +42,8 @@ class User(TypedDict):
     telegram_id: int
     usage_limit_GB: float
     uuid: str
-    enable:bool
+    enable: bool
+
 
 class SystemStatus(TypedDict):
     stats: Dict[str, Union[int, float, str]]
