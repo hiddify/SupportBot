@@ -1,4 +1,13 @@
 {
+    "user":{
+        "not_found":"User not found.",
+        "info":"Name: ${profile_title}\nUsage Limit: ${profile_usage_total_GB} GB\nCurrent Usage: ${profile_usage_current_GB} GB\nRemaining Days: ${profile_remaining_days}",
+        "open_sublink": "Open Sublink",
+        "update": "Update"
+    },
+
+    "userinfo_admin_started":"Name: ${name}\nUsage Limit: ${usage_limit_GB} GB\nCurrent Usage: ${current_usage_GB} GB\nLast Online: ${online_icon} ${last_online_relative}\nPackage Days: ${package_days}\nStart Date: ${start_date_relative}",    
+    "userinfo_admin_notstarted":"Name: ${name}\nUsage Limit: ${usage_limit} GB\nCurrent Usage: ${current_usage} GB\nLast Online: ${online_icon} ${last_online}\nPackage Days: ${package_days}\nStart Date: ${start_date}",
     "start": "Welcome to the Hiddify bot.\n Use the menu below to manage.",
     "unauthorized": "You do not have permission to use this bot.",
     "authorized": "Unauthorized",

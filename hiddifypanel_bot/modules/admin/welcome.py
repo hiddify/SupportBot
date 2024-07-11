@@ -1,13 +1,13 @@
-from hiddifypanel_bot import bot,HiddifyApi
+from hiddifypanel_bot import bot,HMessage,Role
 from hiddifypanel_bot.utils import tghelper
 import telebot
 from i18n import t as _
 
-@bot.message_handler(commands=['start'])
-def send_welcome(message,lang,hapi:HiddifyApi):
+@bot.message_handler(commands=['start'],db={'role':{Role.SUPER_ADMIN,Role.ADMIN,Role.AGENT} })
+def send_welcome(msg:HMessage):
     
-    text = _('start',lang)
-    bot.reply_to(message, text)
+    text = _('start',msg.lang)
+    bot.reply_to(msg, text+str(msg.ctx.all()))
     # await bot.delete_my_commands(scope=None, language_code=None)
 
     # await bot.set_my_commands(
