@@ -45,6 +45,7 @@ class User(TypedDict):
     telegram_id: int
     usage_limit_GB: float
     uuid: str
+    enable:bool
 
 class SystemStatus(TypedDict):
     stats: Dict[str, Union[int, float, str]]

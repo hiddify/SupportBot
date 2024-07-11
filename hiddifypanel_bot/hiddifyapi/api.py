@@ -23,7 +23,7 @@ class HiddifyApi:
 
     def _make_request(self, method: str, endpoint: str,api_key=None, **kwargs) -> requests.Response:
         """Make an HTTP request to the API."""
-        url = f"{self.base_url}/{endpoint.lstrip('/')}/"
+        url = f"{self.base_url}/{endpoint.strip('/')}/"
         try:
             response = requests.request(method, url, headers={'HIDDIFY-API-KEY': api_key or self.api_key},verify=False, **kwargs)
             response.raise_for_status()
@@ -70,10 +70,15 @@ class HiddifyApi:
         response = self._make_request("GET", "api/v2/admin/user/")
         return response.json()
 
-    def get_user_list_by_name(self, query_name: str) -> List[User]:
+    def get_user_list_by_name(self, query_name: str, offset:int, count:int) -> List[User]:
         """Get the list of users filtered by name."""
         users = self.get_user_list()
-        return [user for user in users if query_name.lower() in user.get('name', '').lower()]
+        lis= [user for user in users if query_name.lower() in user.get('name', '').lower()]
+        
+        if len(lis)<offset:
+            return []
+        return lis[offset:offset+count]
+
 
     def update_user(self, uuid: str, data: User) -> User:
         """Update user information."""
@@ -115,7 +120,7 @@ class HiddifyApi:
         self._make_request("DELETE", f"api/v2/admin/user/{uuid}/")
         return True
 
-    def find_user(self, uuid: str) -> User:
+    def get_user(self, uuid: str) -> User:
         """Find a user by UUID."""
         response = self._make_request("GET", f"api/v2/admin/user/{uuid}/")
         return response.json()
