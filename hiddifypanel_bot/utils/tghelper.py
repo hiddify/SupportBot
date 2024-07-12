@@ -39,7 +39,7 @@ def format_user_message_from_admin(lang, user_data):
         user_data["online_icon"] = "❌"
 
     user_data["current_usage_GB"] = "{:.3f}".format(user_data.get("current_usage_GB", 0))
-    user_data["usage_limit_GB"] = "{:.3f}".format(user_data.get("profile_usage_total", 0))
+    user_data["usage_limit_GB"] = "{:.3f}".format(user_data.get("usage_limit_GB", 0))
 
     if start_date:
         user_data["start_date_relative"] = format_timedelta(time_diff, lang, granularity="days")

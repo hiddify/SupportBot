@@ -106,7 +106,7 @@ class HiddifyApi:
 
     async def reset_package_days(self, uuid: str) -> User:
         """Update the package days for a user."""
-        user_data = await self.find_user(uuid)
+        user_data = await self.get_user(uuid)
         if not user_data:
             raise HiddifyApiError("User not found.")
         user_data |= {"last_reset_time": datetime.now().strftime("%Y-%m-%d"), "start_date": None}
@@ -114,7 +114,7 @@ class HiddifyApi:
 
     async def reset_traffic(self, uuid: str) -> User:
         """Reset the traffic limit for a user to 0."""
-        user_data = await self.find_user(uuid)
+        user_data = await self.get_user(uuid)
         if not user_data:
             raise HiddifyApiError("User not found.")
         user_data["current_usage_GB"] = 0

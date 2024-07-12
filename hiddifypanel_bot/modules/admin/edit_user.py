@@ -61,10 +61,35 @@ async def enable_user_handler(call: HCallbackQuery):
     await bot.answer_callback_query(call.id)
 
 
-@bot.callback_query_handler(call_action=C.USER_ENABLE, role=Role.AGENT)
-async def enable_user_handler(call: HCallbackQuery):
+@bot.callback_query_handler(call_action=C.USER_DISABLE, role=Role.AGENT)
+async def disable_user_handler(call: HCallbackQuery):
     uuid = call.data.split(":")[-1]
-    user = await call.message.hapi.update_user(uuid, {"enable": True})
+    user = await call.message.hapi.update_user(uuid, {"enable": False})
     await send_user_info(call.message, user)
     await bot.delete_message(call.message.chat_id, call.message.id)
     await bot.answer_callback_query(call.id)
+
+
+@bot.callback_query_handler(call_action=C.USER_RESET_DAYS, role=Role.AGENT)
+async def disable_user_handler(call: HCallbackQuery):
+    uuid = call.data.split(":")[-1]
+    user = await call.message.hapi.reset_package_days(uuid)
+    await send_user_info(call.message, user)
+    await bot.delete_message(call.message.chat_id, call.message.id)
+    await bot.answer_callback_query(call.id)
+
+@bot.callback_query_handler(call_action=C.USER_RESET_USAGE, role=Role.AGENT)
+async def disable_user_handler(call: HCallbackQuery):
+    uuid = call.data.split(":")[-1]
+    user = await call.message.hapi.reset_traffic(uuid)
+    await send_user_info(call.message, user)
+    await bot.delete_message(call.message.chat_id, call.message.id)
+    await bot.answer_callback_query(call.id)
+
+@bot.callback_query_handler(call_action=C.USER_DELETE, role=Role.AGENT)
+async def disable_user_handler(call: HCallbackQuery):
+    uuid = call.data.split(":")[-1]
+    user = await call.message.hapi.delete_user(uuid)
+    await bot.delete_message(call.message.chat_id, call.message.id)
+    await bot.answer_callback_query(call.id,_("admin.user.removed"),show_alert=True)
+    

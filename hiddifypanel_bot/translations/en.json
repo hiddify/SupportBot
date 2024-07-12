@@ -14,8 +14,8 @@
         "add_user":"Add User",
         "server_info":"Server Info",
         "admin_users":"Admins",
-        "userinfo_started":"Name: ${name}\nUsage Limit: ${usage_limit_GB} GB\nCurrent Usage: ${current_usage_GB} GB\nLast Online: ${online_icon} ${last_online_relative}\nPackage Days: ${package_days}\nStart Date: ${start_date_relative}",    
-        "userinfo_notstarted":"Name: ${name}\nUsage Limit: ${usage_limit} GB\nCurrent Usage: ${current_usage} GB\nLast Online: ${online_icon} ${last_online}\nPackage Days: ${package_days}\nStart Date: ${start_date}"
+        "userinfo_started":"Name: ${name}\nUsage: ${current_usage_GB} GB / ${usage_limit_GB} GB\nLast Online: ${online_icon} ${last_online_relative}\nPackage Days: ${package_days}\nStart Date: ${start_date_relative}",    
+        "userinfo_not_started":"Name: ${name}\nCurrent Usage: ${current_usage_GB} GB / ${usage_limit_GB} GB\nLast Online: ${online_icon} ${last_online}\nPackage Days: ${package_days}\nStart Date: ${start_date}"
     },
     "unauthorized": "You do not have permission to use this bot.",
     "authorized": "Unauthorized",
