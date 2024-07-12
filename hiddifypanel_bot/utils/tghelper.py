@@ -7,16 +7,16 @@ from i18n import t as _
 from .timedelta_format import format_timedelta
 
 
-def set_reaction(message: Message, emoji: str = "👍"):
-    return bot.set_message_reaction(message.chat.id, message.id, [ReactionTypeEmoji(emoji)], is_big=False)
+async def set_reaction(message: Message, emoji: str = "👍"):
+    return await bot.set_message_reaction(message.chat.id, message.id, [ReactionTypeEmoji(emoji)], is_big=False)
 
 
-def format_user_message(msg, user_data):
+def format_user_message(lang, user_data):
 
     user_data["profile_usage_current_GB"] = "{:.3f}".format(user_data.get("profile_usage_current", 0))
     user_data["profile_usage_total_GB"] = "{:.3f}".format(user_data.get("profile_usage_total", 0))
 
-    return _("user.info", msg.lang, **user_data)
+    return _("user.info", lang, **user_data)
 
 
 def format_user_message_from_admin(lang, user_data):

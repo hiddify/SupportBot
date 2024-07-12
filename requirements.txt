@@ -5,7 +5,8 @@
 # You can also run `make switch-to-poetry` to use the poetry package manager.
 
 i18nice==0.15.5
-pyTelegramBotAPI==4.21.0
+#pyTelegramBotAPI==4.21.0
+git+https://github.com/hiddify-com/pyTelegramBotAPI.git@async_register_next_step_handler#egg=pyTelegramBotAPI
 aiohttp
 asyncio
 watchdog

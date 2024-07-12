@@ -7,16 +7,16 @@ from . import constants as C
 
 
 @bot.message_handler(commands=["start"], role=Role.AGENT)
-def send_welcome(msg: HMessage):
-    return main_menu(msg)
+async def send_welcome(msg: HMessage):
+    return await main_menu(msg)
 
 
 @bot.message_handler(func=lambda msg: msg.text in [_("backmainmenu", msg.lang), _("mainmenu", msg.lang)], role=Role.AGENT)
-def main_menu(msg: HMessage):
+async def main_menu(msg: HMessage):
     text = _("admin.start", msg.lang)
 
     keyboards = types.InlineKeyboardMarkup()
-    keyboards.add(types.InlineKeyboardButton(text=_("admin.open_admin"), web_app=types.WebAppInfo(msg.db["admin_link"])))
+    keyboards.add(types.InlineKeyboardButton(text=_("admin.open_admin"), web_app=types.WebAppInfo(await msg.db["admin_link"])))
     keyboards.add(
         types.InlineKeyboardButton(text=_("admin.search_user"), switch_inline_query_current_chat="search "),
         types.InlineKeyboardButton(text=_("admin.add_user"), callback_data=C.ADD_USER),
@@ -25,7 +25,7 @@ def main_menu(msg: HMessage):
         types.InlineKeyboardButton(text=_("admin.server_info"), callback_data=C.SERVER_INFO), types.InlineKeyboardButton(text=_("admin.admin_users"), callback_data=C.ADMIN_USER)
     )
 
-    bot.reply_to(msg, text, reply_markup=keyboards)
+    await bot.reply_to(msg, text, reply_markup=keyboards)
 
     # await bot.delete_my_commands(scope=None, language_code=None)
 

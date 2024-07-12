@@ -8,18 +8,18 @@ from . import constants as C
 
 
 @bot.inline_handler(lambda query: query.query.startswith("search"), role=Role.AGENT)
-def handle_inline_query(query: HInlineQuery):
+async def handle_inline_query(query: HInlineQuery):
     search_query = query.query.lstrip("search").strip()
     results = inline_query(query, search_query)
     button = types.InlineQueryResultsButton(_("admin.search_in_web"), types.WebAppInfo(query.db["admin_link"] + "/admin/user/?search=" + search_query))
     if results:
         next_offset = int(query.offset or "0") + 50 if len(results) >= 50 else None
-        bot.answer_inline_query(query.id, results, is_personal=True, next_offset=next_offset, button=button)
+        await bot.answer_inline_query(query.id, results, is_personal=True, next_offset=next_offset, button=button)
     else:
-        bot.answer_inline_query(query.id, results, is_personal=True, button=button)
+        await bot.answer_inline_query(query.id, results, is_personal=True, button=button)
 
 
-def inline_query(query: HInlineQuery, name: str):
+async def inline_query(query: HInlineQuery, name: str):
     results = []
     offset = int(query.offset or "0")
     user_list = query.hapi.get_user_list_by_name(name, offset, 50)

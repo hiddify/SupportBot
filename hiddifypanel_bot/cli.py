@@ -11,6 +11,9 @@ import asyncio
 from . import utils
 from . import basebot
 def main():  # pragma: no cover
+    from dotenv import load_dotenv
+    load_dotenv()
+
     utils.setup_translation()
     # import i18n
     # print(i18n.t("start",locale='fa'))

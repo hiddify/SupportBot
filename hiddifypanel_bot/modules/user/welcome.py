@@ -7,16 +7,16 @@ from . import constants as C
 
 
 @bot.message_handler(role=Role.USER)
-def send_welcome(msg: HMessage):
+async def send_welcome(msg: HMessage):
 
     text = _("start", msg.lang)
     info = msg.hapi.get_user_info()
 
     # bot.reply_to(msg, text+str(info))
-    show_user(msg)
+    await show_user(msg)
 
 
-def show_user(msg: HMessage, edit=False):
+async def show_user(msg: HMessage, edit=False):
 
     user_data = msg.hapi.get_user_info()
     if user_data["lang"] == msg.lang:
@@ -26,27 +26,29 @@ def show_user(msg: HMessage, edit=False):
         restext = tghelper.format_user_message(msg, user_data)
 
         sublink = user_data["profile_url"]
-        qr_code = msg.hapi.generate_qr_code(sublink)
+        
 
         unauthorized_keyboard = types.InlineKeyboardMarkup()
         unauthorized_keyboard.add(types.InlineKeyboardButton(text=_("user.open_sublink"), web_app=types.WebAppInfo(sublink)))
         unauthorized_keyboard.add(types.InlineKeyboardButton(text=_("user.update"), callback_data="user.update"))
+        # unauthorized_keyboard.add(types.InlineKeyboardButton(text="Open Sublink", url=sublink))
 
         if edit:
             try:  # it raise error if no change happens
-                bot.edit_message_caption(restext, msg.chat_id, message_id=msg.message_id, reply_markup=unauthorized_keyboard)
+                await bot.edit_message_caption(restext, msg.chat_id, message_id=msg.message_id, reply_markup=unauthorized_keyboard)
             except:
                 pass
         else:
-            bot.send_photo(msg.chat_id, qr_code, caption=restext, reply_markup=unauthorized_keyboard, protect_content=True)
+            qr_code = msg.hapi.generate_qr_code(sublink)
+            await bot.send_photo(msg.chat_id, qr_code, caption=restext, reply_markup=unauthorized_keyboard, protect_content=True)
 
         if user_data["telegram_id"] == msg.user_id:
             msg.hapi.update_my_user({"telegram_id", msg.user_id})
     else:
-        bot.reply_to(msg, _("user.not_found"))
+        await bot.reply_to(msg, _("user.not_found"))
 
 
 @bot.callback_query_handler(call_action=C.USER_UPDATE)
-def update_user(call: HCallbackQuery):
-    show_user(call.message, edit=True)
-    bot.answer_callback_query(call.id)
+async def update_user(call: HCallbackQuery):
+    await show_user(call.message, edit=True)
+    await bot.answer_callback_query(call.id)

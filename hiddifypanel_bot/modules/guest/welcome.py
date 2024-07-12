@@ -4,11 +4,11 @@ import telebot
 from i18n import t as _
 
 @bot.message_handler(role=Role.UNKNOWN)
-def send_welcome(msg:HMessage):
+async def send_welcome(msg:HMessage):
     
     text = _('start',msg.lang)
     
-    bot.reply_to(msg, text)
+    await bot.reply_to(msg, text)
 
     # await bot.delete_my_commands(scope=None, language_code=None)
 

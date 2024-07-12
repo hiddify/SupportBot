@@ -1,4 +1,5 @@
 from __future__ import annotations
+import os
 
 import requests
 from datetime import datetime
@@ -16,33 +17,44 @@ class HiddifyApiError(Exception):
     """Custom exception for HiddifyApi errors."""
 
 
-class HiddifyApi:
-    def __init__(self, api_url: str, api_key: str):
-        self.base_url: str = api_url.rstrip("/")
+HIDDIFYPANEL_USER_LINK = os.getenv("HIDDIFYPANEL_USER_LINK").rstrip("/")
+HIDDIFYPANEL_ADMIN_LINK = os.getenv("HIDDIFYPANEL_ADMIN_LINK").rstrip("/")
 
+
+class HiddifyApi:
+    def __init__(self, api_key: str):
         self.api_key = api_key
         requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
-    def _make_request(self, method: str, endpoint: str, api_key=None, **kwargs) -> requests.Response:
+    def get_admin_link(self):
+        return f"{HIDDIFYPANEL_ADMIN_LINK}/{self.api_key}/"
+
+    def get_user_link(self):
+        return f"{HIDDIFYPANEL_USER_LINK}/{self.api_key}/"
+
+    def _make_request(self, method: str, endpoint: str, api_key=None, admin=True, **kwargs) -> requests.Response:
         """Make an HTTP request to the API."""
-        url = f"{self.base_url}/{endpoint.strip('/')}/"
+        if admin:
+            url = f"{HIDDIFYPANEL_ADMIN_LINK}/{endpoint.strip('/')}/"
+        else:
+            url = f"{HIDDIFYPANEL_USER_LINK}/{endpoint.strip('/')}/"
         try:
             response = requests.request(method, url, headers={"HIDDIFY-API-KEY": api_key or self.api_key}, verify=False, **kwargs)
             response.raise_for_status()
-            return response
+            return response.json()
         except requests.RequestException as e:
             raise HiddifyApiError(f"Error in API request: {e}") from e
 
     def get_system_status(self) -> SystemStatus:
         """Get the system status."""
         response = self._make_request("GET", "api/v2/admin/server_status/")
-        data = response.json()
+        data = response
         return SystemStatus(stats=data.get("stats", {}), usage_history=data.get("usage_history", {}))
 
     def get_admin_list(self) -> List[Dict[str, Union[str, int]]]:
         """Get the list of admin users."""
         response = self._make_request("GET", "api/v2/admin/admin_user/")
-        return response.json()
+        return response
 
     def delete_admin_user(self, uuid: str) -> bool:
         """Delete an admin user."""
@@ -54,21 +66,21 @@ class HiddifyApi:
 
     def get_user_info(self, uuid: str = None) -> UserInfo:
         """Get detailed user information."""
-        response = self._make_request("GET", f"api/v2/user/me", api_key=uuid)
-        return UserInfo(**response.json())
+        response = self._make_request("GET", f"api/v2/user/me", api_key=uuid, admin=False)
+        return UserInfo(**response)
 
     def update_my_user(self, data: User):
-        return self._make_request("PATCH", f"api/v2/user/", json=data)
+        return self._make_request("PATCH", f"api/v2/user/", json=data, admin=False)
 
     def get_admin_info(self, uuid: str = None) -> AdminInfo:
         """Get detailed user information."""
         response = self._make_request("GET", f"api/v2/admin/me", api_key=uuid)
-        return UserInfo(**response.json())
+        return UserInfo(**response)
 
     def get_user_list(self) -> List[User]:
         """Get the list of users."""
         response = self._make_request("GET", "api/v2/admin/user/")
-        return response.json()
+        return response
 
     def get_user_list_by_name(self, query_name: str, offset: int, count: int) -> List[User]:
         """Get the list of users filtered by name."""
@@ -115,7 +127,7 @@ class HiddifyApi:
     def get_user(self, uuid: str) -> User:
         """Find a user by UUID."""
         response = self._make_request("GET", f"api/v2/admin/user/{uuid}/")
-        return response.json()
+        return response
 
     def backup_file(self) -> bytes:
         """Backup the file."""
@@ -126,8 +138,8 @@ class HiddifyApi:
         """Get information about available apps for a given UUID."""
         url = f"{self.base_url}/api/v2/user/apps/"
         params = {"platform": "all"}
-        response = self._make_request("GET", url, params=params, api_key=uuid)
-        return response.json()
+        response = self._make_request("GET", url, params=params, api_key=uuid, admin=False)
+        return response
 
     @staticmethod
     def generate_qr_code(data: str) -> BytesIO:
@@ -135,8 +147,8 @@ class HiddifyApi:
         qr = qrcode.QRCode(version=1, box_size=10, border=2)
         qr.add_data(data)
         qr.make(fit=True)
-        qr_img = qr.make_image(fill_color="White", back_color="Transparent", image_factory=StyledPilImage, module_drawer=CircleModuleDrawer(), color_mask=RadialGradiantColorMask())
-
+        # qr_img = qr.make_image(fill_color="White", back_color="Transparent", image_factory=StyledPilImage, module_drawer=CircleModuleDrawer(), color_mask=RadialGradiantColorMask())
+        qr_img = qr.make_image(fill_color="black", back_color="white")
         qr_byte_io = BytesIO()
         qr_img.save(qr_byte_io, format="PNG")
         qr_byte_io.seek(0)
