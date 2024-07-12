@@ -8,16 +8,15 @@ class StorageFilter(asyncio_filters.AdvancedCustomFilter):
         """
         :meta private:
         """
-        if isinstance(obj,types.Message):
-            message=obj
+        if hasattr(obj,'db'):
+            storage=obj.db
         elif hasattr(obj,'message'):
-            message=obj.message
+            storage=obj.message.db
         else:
             return 
         if not isinstance(val, dict):
             raise ValueError("Invalid Usage")
         
-        storage=message.db
         for k,v in val.items():    
             l=v if isinstance(v, list) else [v]
             data=await storage[k]

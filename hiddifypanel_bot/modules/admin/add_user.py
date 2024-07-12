@@ -60,7 +60,7 @@ async def add_user_complete(msg: HMessage, name: str, package_days: int, usage_l
         resp=tghelper.format_user_message(msg.lang,user_info)
         uuid = user_data.get("uuid", "N/A")
         sublink_data = user_info['profile_url']
-        qr_code = await msg.hapi.generate_qr_code(sublink_data)
+        qr_code = msg.hapi.generate_qr_code(sublink_data)
 
         inline_keyboard = InlineKeyboardMarkup()
         # inline_keyboard.add(InlineKeyboardButton(text="Open Sublink", web_app=WebAppInfo(sublink_data)))
