@@ -49,18 +49,18 @@ async def validate_usage_limit(msg: HMessage, name: str, package_days: int):
 @bot.step_handler()
 async def add_user_complete(msg: HMessage, name: str, package_days: int, usage_limit: float):
 
-    user_data = msg.hapi.add_user(User(
+    user_data = await msg.hapi.add_user(User(
         comment="",
          name= name,
           package_days= package_days,
            usage_limit_GB= usage_limit
     ))
     if "msg" not in user_data:
-        user_info=msg.hapi.get_user_info(user_data['uuid'])
+        user_info=await msg.hapi.get_user_info(user_data['uuid'])
         resp=tghelper.format_user_message(msg.lang,user_info)
         uuid = user_data.get("uuid", "N/A")
         sublink_data = user_info['profile_url']
-        qr_code = msg.hapi.generate_qr_code(sublink_data)
+        qr_code = await msg.hapi.generate_qr_code(sublink_data)
 
         inline_keyboard = InlineKeyboardMarkup()
         # inline_keyboard.add(InlineKeyboardButton(text="Open Sublink", web_app=WebAppInfo(sublink_data)))

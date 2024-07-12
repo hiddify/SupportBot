@@ -10,15 +10,16 @@ from . import constants as C
 async def send_welcome(msg: HMessage):
 
     text = _("start", msg.lang)
-    info = msg.hapi.get_user_info()
+    info = await msg.hapi.get_user_info()
 
     # bot.reply_to(msg, text+str(info))
     await show_user(msg)
+    await bot.delete_message(msg.chat_id,msg.id)
 
 
 async def show_user(msg: HMessage, edit=False):
 
-    user_data = msg.hapi.get_user_info()
+    user_data = await msg.hapi.get_user_info()
     if user_data["lang"] == msg.lang:
         msg.lang = msg.db["lang"] = user_data["lang"]
 
@@ -43,7 +44,7 @@ async def show_user(msg: HMessage, edit=False):
             await bot.send_photo(msg.chat_id, qr_code, caption=restext, reply_markup=unauthorized_keyboard, protect_content=True)
 
         if user_data["telegram_id"] == msg.user_id:
-            msg.hapi.update_my_user({"telegram_id", msg.user_id})
+            await msg.hapi.update_my_user({"telegram_id", msg.user_id})
     else:
         await bot.reply_to(msg, _("user.not_found"))
 
@@ -52,3 +53,4 @@ async def show_user(msg: HMessage, edit=False):
 async def update_user(call: HCallbackQuery):
     await show_user(call.message, edit=True)
     await bot.answer_callback_query(call.id)
+    await bot.send_chat_action(call.message.chat_id,"")

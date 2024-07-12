@@ -76,7 +76,7 @@ class Middleware(asyncio_handler_backends.BaseMiddleware):
                 if len(params) >= 2 and "admin" in params[1]:
                     uid = params[1].split("_")[1]
                     hapi = HiddifyApi(uid)
-                    info=hapi.get_admin_info()
+                    info=await hapi.get_admin_info()
                     role = info["mode"]
                     if role == "super_admin":
                         role = Role.SUPER_ADMIN
@@ -95,7 +95,7 @@ class Middleware(asyncio_handler_backends.BaseMiddleware):
                     uid = params[1]
                     base.hapi = HiddifyApi(uid)
                     await db.set(
-                        info = base.hapi.get_user_info(),
+                        info = await base.hapi.get_user_info(),
                         guid = uid,
                         role=Role.USER)
                     base.role =  Role.USER
@@ -113,11 +113,10 @@ class Middleware(asyncio_handler_backends.BaseMiddleware):
             return
         await self.set_user_data(base)
 
-        if base.chat_id:
-            await self.bot.send_chat_action(base.chat_id, "typing")
         if isinstance(obj, types.Message):
+            if base.chat_id:
+                await self.bot.send_chat_action(base.chat_id, "typing")
             from hiddifypanel_bot.utils import tghelper
-
             await tghelper.set_reaction(base)
 
     async def post_process(self, message, data, exception):
