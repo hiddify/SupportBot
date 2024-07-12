@@ -7,7 +7,7 @@ from i18n import t as _
 from . import constants as C
 
 
-@bot.inline_handler(lambda query: query.query.startswith("search"))
+@bot.inline_handler(lambda query: query.query.startswith("search"),role=Role.AGENT)
 async def handle_inline_query(query: HInlineQuery):
     search_query = query.query.lstrip("search").strip()
     results = await inline_query(query, search_query)
