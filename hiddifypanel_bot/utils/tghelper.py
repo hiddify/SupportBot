@@ -26,11 +26,11 @@ def format_user_message_from_admin(lang, user_data):
     last_online_display = user_data.get("last_online")
     if last_online_display:
         last_online = datetime.strptime(last_online_display, "%Y-%m-%d %H:%M:%S")
-        time_diff = current_time - last_online
+        time_diff = last_online-current_time 
         user_data["last_online_relative"] = format_timedelta(time_diff, lang, granularity="minutes")
-        if time_diff < timedelta(minutes=1):
+        if time_diff > timedelta(minutes=1):
             user_data["online_icon"] = "🟢"
-        elif time_diff < timedelta(minutes=5):
+        elif time_diff > timedelta(minutes=5):
             user_data["online_icon"] = "🟡"
         else:
             user_data["online_icon"] = "🔴"
