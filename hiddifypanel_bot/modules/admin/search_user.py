@@ -30,7 +30,7 @@ async def inline_query(query: HInlineQuery, name: str):
             resp = tghelper.format_user_message_from_admin(query.lang, user)
 
             response_text = f'`{user["uuid"]}`\n' + resp
-            response_text = response_text.replace(".", "\\.")
+            response_text = response_text.replace(".", "\\.").replace("-", "\\-")
             keyboards = types.InlineKeyboardMarkup()
             keyboards.add(types.InlineKeyboardButton(text=_("admin.loading"), callback_data="user_" + user["uuid"]))
 
