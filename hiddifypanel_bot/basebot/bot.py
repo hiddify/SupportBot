@@ -1,6 +1,6 @@
 import logging
 import os
-from telebot.async_telebot import AsyncTeleBot,logger
+from telebot.async_telebot import logger
 from telebot import TeleBot, ExceptionHandler,types
 from telebot import asyncio_filters
 from telebot.asyncio_storage import StateMemoryStorage
@@ -8,6 +8,7 @@ from .storage_filter import StorageFilter
 from .call_action_filter import CallActionFilter
 from .role_filter import RoleFilter
 from .middleware import Middleware
+from .hasync_telebot  import HAsyncTeleBot
 logger.setLevel(logging.INFO)  # Outputs debug messages to console.
 
 
@@ -21,18 +22,11 @@ class MyExceptionHandler(ExceptionHandler):
         logger.error(exception)
         raise exception
 
-bot: AsyncTeleBot = AsyncTeleBot(
+bot: HAsyncTeleBot = HAsyncTeleBot(
     BOT_TOKEN,
-    # exception_handler=MyExceptionHandler(),
-    
+    exception_handler=MyExceptionHandler(),
     state_storage=state_storage,
 )
-
-def callback(func=None,**kwargs):
-    if func is None: func=lambda call:True
-    return bot.callback_query_handler_orig(func,**kwargs)
-bot.callback_query_handler_orig=bot.callback_query_handler
-bot.callback_query_handler=callback
 
 
 bot.add_custom_filter(asyncio_filters.StateFilter(bot))
