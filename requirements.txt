@@ -16,3 +16,5 @@ pillow
 qrcode
 requests
 python-dotenv
+asyncssh
+paramiko

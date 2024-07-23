@@ -9,7 +9,7 @@
             "type": "debugpy",
             "request": "launch",
             "program": "__main__.py",
-            "cwd": "${workspaceFolder}/hiddifypanel_bot",
+            "cwd": "${workspaceFolder}/hiddify_support_bot",
             "console": "integratedTerminal",
             "justMyCode": false
         }

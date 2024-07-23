@@ -1,6 +1,6 @@
 # How to develop on this project
 
-hiddifypanel_bot welcomes contributions from the community.
+hiddify_support_bot welcomes contributions from the community.
 
 **You need PYTHON3!**
 
@@ -8,9 +8,9 @@ This instructions are for linux base systems. (Linux, MacOS, BSD, etc.)
 ## Setting up your own fork of this repo.
 
 - On github interface click on `Fork` button.
-- Clone your fork of this repo. `git clone git@github.com:YOUR_GIT_USERNAME/hiddifypanel_bot.git`
-- Enter the directory `cd hiddifypanel_bot`
-- Add upstream repo `git remote add upstream https://github.com/hiddify/hiddifypanel_bot`
+- Clone your fork of this repo. `git clone git@github.com:YOUR_GIT_USERNAME/hiddify_support_bot.git`
+- Enter the directory `cd hiddify_support_bot`
+- Add upstream repo `git remote add upstream https://github.com/hiddify/hiddify_support_bot`
 
 ## Setting up your own virtual environment
 
