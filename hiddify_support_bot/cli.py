@@ -18,7 +18,7 @@ def main():  # pragma: no cover
     # import i18n
     # print(i18n.t("start",locale='fa'))
     import sys
-    if hasattr(sys, 'gettrace') and sys.gettrace() is not None: #is debug mode
+    if 1 or hasattr(sys, 'gettrace') and sys.gettrace() is not None: #is debug mode
         asyncio.run(basebot.bot.polling())      
     else:
         try:

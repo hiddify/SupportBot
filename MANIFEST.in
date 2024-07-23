@@ -3,3 +3,4 @@ include HISTORY.md
 include Containerfile
 graft tests
 graft hiddify_support_bot
+include hiddify_support_bot/translations/*.json
