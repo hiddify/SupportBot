@@ -7,11 +7,11 @@ class StepFilter(asyncio_filters.AdvancedCustomFilter):
 
     key = "step"
 
-    async def check(self, obj, text):
+    async def check(self, message, text):
         """
         :meta private:
         """
-        if isinstance(obj, types.Message) and obj.text and obj.text.startswith("/"):
+        if isinstance(message, types.Message) and message.text and message.text.startswith("/"):
             return False
 
         # needs to work with callbackquery
