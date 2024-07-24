@@ -11,6 +11,7 @@ from .call_action_filter import CallActionFilter
 from .role_filter import RoleFilter
 from .middleware import Middleware
 from .hasync_telebot  import HAsyncTeleBot
+from .step_filter import StepFilter
 from dotenv import load_dotenv
 load_dotenv()
 logger.setLevel(logging.INFO)  # Outputs debug messages to console.
@@ -38,6 +39,7 @@ bot: HAsyncTeleBot = HAsyncTeleBot(
 
 
 bot.add_custom_filter(asyncio_filters.StateFilter(bot))
+bot.add_custom_filter(StepFilter(bot))
 bot.add_custom_filter(asyncio_filters.TextMatchFilter())
 bot.add_custom_filter(asyncio_filters.TextStartsFilter())
 bot.add_custom_filter(StorageFilter())

@@ -37,12 +37,13 @@ class HAsyncTeleBot(AsyncTeleBot):
                         del data['__step_handler_kwargs__']
                     if '__step_handler_args__' in data:
                         del data['__step_handler_args__']
-                await self.set_state(msg.from_user.id, None, msg.chat.id)
+                    if '__step__' in data:
+                        del data['__step__']
                 return await handler(*args, *step_args, **kwargs, **step_kwargs)
             self.message_handlers.insert(0,{
                 'function': wrapper,
                 'pass_bot': False,
-                'filters': {'state': signature}
+                'filters': {'step': signature}
             })
             wrapper.signature = signature
             return wrapper
@@ -69,11 +70,11 @@ class HAsyncTeleBot(AsyncTeleBot):
 
         if not hasattr(callback,'signature'):
             raise ValueError("Do not forget to add @bot.step_handler() before function")
-        await self.set_state(user_id, callback.signature, chat_id)
-        await self.add_data(user_id, chat_id, __step_handler_args__=args, __step_handler_kwargs__=kwargs )
+        
+        await self.add_user_data(user_id, chat_id, __step__=callback.signature, __step_handler_args__=args, __step_handler_kwargs__=kwargs )
 
 
     def callback_query_handler(self, func=None,**kwargs):
         if func is None: func=lambda call:True
         return super().callback_query_handler(func,**kwargs)
-            
+
