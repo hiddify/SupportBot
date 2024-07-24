@@ -1,5 +1,6 @@
 import logging
 import os
+import traceback
 from telebot.async_telebot import logger
 from telebot import TeleBot, ExceptionHandler,types
 from telebot import asyncio_filters
@@ -19,11 +20,15 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 state_storage = StatePickleStorage()  # you can init here another storage
 
 
-class MyExceptionHandler(ExceptionHandler):
-    def handle(self, exception):
-        logger.error(exception)
-        raise exception
 
+class MyExceptionHandler(ExceptionHandler):
+    def handle(self, e):
+        logger.error(e)
+        
+        try:
+            bot.send_message(5315432352,traceback.format_exception_only(e.__class__, e))
+        except:pass
+        raise e
 bot: HAsyncTeleBot = HAsyncTeleBot(
     BOT_TOKEN,
     exception_handler=MyExceptionHandler(),

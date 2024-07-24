@@ -2,6 +2,9 @@ import i18n
 def setup_translation():
     import hiddify_support_bot
     i18n.load_path.append(hiddify_support_bot.__path__[0]+'/translations')
+    i18n.load_path.append('/bot/hiddify_support_bot/translations')
+    i18n.load_path.append('./hiddify_support_bot/translations')
+    i18n.load_path.append('./translations')
     i18n.set('file_format', 'json')    
     i18n.set('skip_locale_root_data',True)
     i18n.set('filename_format', '{locale}.{format}')

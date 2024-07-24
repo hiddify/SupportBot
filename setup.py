@@ -43,7 +43,7 @@ setup(
         "console_scripts": ["hiddify_support_bot = hiddify_support_bot.__main__:main"]
     },
      package_data={
-        'hiddify_support_bot': ['translations/*.json'],
+        'hiddify_support_bot': ['translations/*.json','hiddify_support_bot/translations/*.json'],
     },
     extras_require={"test": read_requirements("requirements-test.txt")},
     include_package_data=True,
