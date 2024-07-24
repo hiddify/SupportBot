@@ -1,9 +1,12 @@
+from urllib.parse import parse_qs
 from .base64 import base64url_decode, base64url_encode
 import json
 
 
 def encode(action, data):
-    return f"{action}_{base64url_encode(json.dumps(data))}"
+    code="&".join([f'{k}={v}' for k,v in data.items()])
+        
+    return f"{action}_{base64url_encode(code)}"
 
 
 def decode(txt: str):
@@ -12,16 +15,9 @@ def decode(txt: str):
     txt = txt.removeprefix("start").removeprefix("/start").strip()
     splt = txt.split("_", 2)
     action = splt[0]
+    if len(splt)!=2: return action, {}
+    items=base64url_decode(splt[1]).split("&")
     
-    data = json.loads(base64url_decode(splt[1])) if len(splt)==2 else {}
-    return action, data
+    
+    return action, {e.split("=")[0]:e.split("=")[1] for e in items}
 
-
-def decode_if_action(txt: str, action: str):
-    if not txt:
-        return None
-    txt = txt.removeprefix("start").removeprefix("/start").strip()
-    if not txt.startswith(action):
-        return None
-    txt = txt.removeprefix(f"{action}_").strip()
-    return json.loads(base64url_decode(txt))
