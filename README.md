@@ -5,7 +5,7 @@
 
 <div align=center>
     
-[![inlang status badge](https://inlang.com/badge?url=github.com/hiddify/hiddify_support_bot)](https://inlang.com/editor/github.com/hiddify/hiddify_support_bot?ref=badge)
+[![inlang status badge](https://inlang.com/badge?url=github.com/hiddify-com/supportbot)](https://inlang.com/editor/github.com/hiddify-com/supportbot?ref=badge)
 </div>
 
 
