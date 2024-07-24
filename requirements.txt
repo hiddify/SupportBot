@@ -1,20 +1,9 @@
-# This template is a low-dependency template. 
-# By default there is no requirements added here.
-# Add the requirements you need to this file.
-# or run `make init` to create this file automatically based on the template.
-# You can also run `make switch-to-poetry` to use the poetry package manager.
-
 i18nice==0.15.5
 pyTelegramBotAPI==4.21.0
 #git+https://github.com/hiddify-com/pyTelegramBotAPI.git@async_register_next_step_handler#egg=pyTelegramBotAPI
-aiohttp
-asyncio
-watchdog
-psutil
-pillow
+aiohttp==3.9.5
+asyncio==3.4.3
+python-dotenv==1.0.1
+asyncssh==2.15.0
+cryptography==42.0
 
-qrcode
-requests
-python-dotenv
-asyncssh
-paramiko

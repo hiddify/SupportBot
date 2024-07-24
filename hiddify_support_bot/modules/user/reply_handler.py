@@ -5,7 +5,7 @@ import telebot
 from telebot import types
 from i18n import t as _
 from . import constants as C
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton, ForceReply, ReplyKeyboardRemove, Message
+from telebot.types import ReplyKeyboardMarkup, KeyboardButton, ForceReply, ReplyKeyboardRemove, Message,ReplyParameters
 import os
 from . import ssh_utils
 from io import StringIO
@@ -54,9 +54,9 @@ async def reply_to_us(msg: HMessage):
         """
         # await bot.copy_message(chat_id, msg.chat.id,  msg.message_id)
     if msg.text:
-        await bot.send_message(reply_to['chat_id'],caption , reply_to_message_id=reply_to['msg_id'],parse_mode='markdown')
+        await bot.send_message(reply_to['chat_id'],caption ,reply_parameters=ReplyParameters(reply_to['msg_id']),parse_mode='markdown')
     else:
-        await bot.copy_message(reply_to['chat_id'], msg.chat.id,  msg.message_id, caption=caption, reply_to_message_id=reply_to['msg_id'],parse_mode='markdown',)
+        await bot.copy_message(reply_to['chat_id'], msg.chat.id,  msg.message_id, caption=caption, reply_parameters=ReplyParameters(reply_to['msg_id']),parse_mode='markdown',)
         
         
         
@@ -100,7 +100,7 @@ async def reply_to_user(msg: HMessage):
 =====
 {msg.text or msg.caption}"""
     if msg.text:
-        await bot.send_message(reply_to_chat_data['chat_id'],caption,reply_to_message_id=reply_to_chat_data['msg_id'],parse_mode='markdown')
+        await bot.send_message(reply_to_chat_data['chat_id'],caption,reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']),parse_mode='markdown')
     else:
-        await bot.copy_message(reply_to_chat_data['chat_id'], msg.chat.id,  msg.id ,reply_to_message_id=reply_to_chat_data['msg_id'], caption=caption,parse_mode='markdown')
+        await bot.copy_message(reply_to_chat_data['chat_id'], msg.chat.id,  msg.id ,reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), caption=caption,parse_mode='markdown')
         await bot.reply_to(msg, _("chat.reply_sent_to_user",msg.lang),parse_mode='markdown')

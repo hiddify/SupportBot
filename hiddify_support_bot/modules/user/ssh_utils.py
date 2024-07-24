@@ -1,7 +1,7 @@
 from io import StringIO
 import asyncssh
 
-import paramiko
+
 def get_public_key():
     with open(SSH_PUB_PATH)  as f:
         return f.readline()
