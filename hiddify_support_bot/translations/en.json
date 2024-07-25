@@ -9,15 +9,16 @@
         "finish": "Thank you for your message."
     },
     "chat": {
-        "reply_insrtuction": "You can reply by replying to this message.",
+        "reply_insrtuction": "You can answer by replying to this message.",
         "reply_sent_to_user": "Your message sent!",
-        "cancel": "Canceled! Returning to main menu"
+        "cancel": "Canceled! Returning to main menu",
+        "reply": "You can answer by replying to this message. "
     },
-    "actions":{
-        "setwelcome_invalid":"Please select a correct message",
-        "setwelcome_success":"Set successfully!"
+    "actions": {
+        "setwelcome_invalid": "Please select a correct message",
+        "setwelcome_success": "Set successfully!"
     },
-    "contribute":{
-        "invalid":"Invalid Request!"
+    "contribute": {
+        "invalid": "Invalid Request!"
     }
 }
