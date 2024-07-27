@@ -11,6 +11,10 @@ SSH_PK_PATH = "./hiddify_support.key"
 SSH_PUB_PATH = SSH_PK_PATH+".pub"
 SSH_PUB_STR = get_public_key()
 
+ansi_escape_pattern = re.compile(r'\x1B[@-_][0-?]*[ -/]*[@-~]')
+
+# Remove ANSI escape sequences
+
 
 async def test_ssh_connection(ssh_info):
     if not ssh_info:
@@ -25,7 +29,7 @@ async def test_ssh_connection(ssh_info):
             out = f"{result.stdout}  {result.stderr}".strip()
             try:
                 status = await conn.run("/opt/hiddify-manager/status.sh")
-                out += f"```bash\n{status.stdout}\n{status.stderr}```"
+                out += f"```bash\n{ansi_escape_pattern.sub('', status.stdout)}\n{status.stderr}```"
             except Exception as e:
                 out += (f"Error: {e}")
             print("SUCCESS")
