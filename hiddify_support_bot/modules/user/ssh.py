@@ -37,10 +37,10 @@ async def send_ssh(msg: HMessage, start_action=None, start_params=None):
         await msg.db.set(ssh_target_chat_id=cid)
     markup = ForceReply(selective=False)
 
-    await bot.send_message(msg.chat.id, _("ssh.welcome", msg.lang), parse_mode='markdownv2')
-    await bot.send_message(msg.chat.id, _("ssh.add_permission", msg.lang, public_key=ssh_utils.SSH_PUB_STR), parse_mode='markdownv2')
+    await bot.send_message(msg.chat.id, _("ssh.welcome", msg.lang), parse_mode='markdown')
+    await bot.send_message(msg.chat.id, _("ssh.add_permission", msg.lang, public_key=ssh_utils.SSH_PUB_STR), parse_mode='markdown')
 
-    await bot.send_message(msg.chat.id, _("ssh.send_ssh", msg.lang), reply_markup=markup, parse_mode='markdownv2')
+    await bot.send_message(msg.chat.id, _("ssh.send_ssh", msg.lang), reply_markup=markup, parse_mode='markdown')
     await bot.register_next_step_handler(msg.user_id, msg.chat_id, ssh_received)
 
 
@@ -76,15 +76,15 @@ async def ssh_received_comment(msg: HMessage):
     ssh_target_chat_id = await msg.db.get('ssh_target_chat_id', -1001834220158)
     # print(msgtxt)
     if msg.text:
-        new_message = await bot.send_message(ssh_target_chat_id, msgtxt, parse_mode='markdownv2')
+        new_message = await bot.send_message(ssh_target_chat_id, msgtxt, parse_mode='markdown')
 
     else:
-        new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdownv2')
+        new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdown')
 
     # data['SSH_info_comment'] = message
     # new_message=await bot.forward_message(-1001834220158,from_chat_id=message.chat.id,message_id=message.message_id)
-    await bot.send_message(msg.chat.id, _("ssh.finish", msg.lang), parse_mode='markdownv2')
+    await bot.send_message(msg.chat.id, _("ssh.finish", msg.lang), parse_mode='markdown')
 
-    # new_message = await bot.send_message(-1001834220158, msgtxt, parse_mode='markdownv2')
+    # new_message = await bot.send_message(-1001834220158, msgtxt, parse_mode='markdown')
 
-    await bot.send_message(msg.chat.id, _("ssh.remove_permission", msg.lang, public_key=ssh_utils.SSH_PUB_STR), parse_mode='markdownv2')
+    await bot.send_message(msg.chat.id, _("ssh.remove_permission", msg.lang, public_key=ssh_utils.SSH_PUB_STR), parse_mode='markdown')
