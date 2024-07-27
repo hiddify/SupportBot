@@ -22,11 +22,11 @@ async def test_ssh_connection(ssh_info):
         ) as conn:
             # result = await conn.run("pip3 freeze | grep hiddifypanel | awk -F ' == ' '{ print $2 }'")
             result = await conn.run("cat /opt/hiddify-manager/VERSION")
-            try:
-                result += "```bash\n" + await conn.run("/opt/hiddify-manager/status.sh")+"\n```"
-            except Exception as e:
-                result += (f"Error: {e}")
             out = f"{result.stdout}  {result.stderr}".strip()
+            try:
+                out += "```bash\n" + await conn.run("/opt/hiddify-manager/status.sh")+"\n```"
+            except Exception as e:
+                out += (f"Error: {e}")
             print("SUCCESS")
             return f'"{out}"'
         return "WTF?"
