@@ -41,7 +41,7 @@ async def test_ssh_connection(ssh_info):
     return False
 
 
-def get_ssh_info(txt):
+def get_ssh_info(txt, searchAll=False):
     import re
 
     pattern = r"^(?:ssh\s+)?(?:(?P<user>\w+)@(?P<host>[^\s@]+))?(?:\s+-p\s+(?P<port>\d+))?\s*$"
@@ -55,3 +55,17 @@ def get_ssh_info(txt):
             port = 22
         return {"user": groups["user"], "host": groups["host"], "port": port}
     return None
+
+
+async def close_permission(ssh_info):
+    try:
+        async with asyncssh.connect(
+            ssh_info["host"], port=ssh_info["port"], username=ssh_info["user"], client_keys=[SSH_PK_PATH], known_hosts=None, connect_timeout=2
+        ) as conn:
+            # result = await conn.run("pip3 freeze | grep hiddifypanel | awk -F ' == ' '{ print $2 }'")
+            result = await conn.run("sed -i '/hiddify@assistant/d' ~/.ssh/authorized_keys")
+            out = f"{result.stdout}  {result.stderr}".strip()
+            return f'"{out}"'
+        return "WTF?"
+    except Exception as e:
+        print(f"Error: {e}")

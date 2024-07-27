@@ -3,25 +3,57 @@ from hiddify_support_bot import bot, HMessage, HCallbackQuery, Role
 from hiddify_support_bot.utils import start_param, tghelper
 import telebot
 from telebot import types
-from i18n import t
+from i18n import t as _
 from . import constants as C
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, ForceReply, ReplyKeyboardRemove, Message
 import os
-from . import ssh_utils
+from . import ssh_utils, reply_handler
 from io import StringIO
 
 SSH_HOST = os.environ.get("SSH_HOST")
 
 
-REFACTOR_REGEX = r"(?<!\\)(_|\*|\[|\]|\(|\)|\~|`|>|#|\+|-|=|\||\{|\}|\.|\!)"
+# REFACTOR_REGEX = r"(?<!\\)(_|\*|\[|\]|\(|\)|\~|`|>|#|\+|-|=|\||\{|\}|\.|\!)"
 
 
-def _(key, lang, markdown=True, **kwargs):
-    k = t(key, lang, **kwargs)
-    # if markdown:
-    #     return k.replace(".", "\.")
-    #     return re.sub(REFACTOR_REGEX, lambda t: "\\"+t.group(), k)
-    return k
+# def _(key, lang, markdown=True, **kwargs):
+#     k = t(key, lang, **kwargs)
+#     # if markdown:
+#     #     return k.replace(".", "\.")
+#     #     return re.sub(REFACTOR_REGEX, lambda t: "\\"+t.group(), k)
+#     return k
+
+@bot.message_handler(text_startswith="/done", func=lambda msg: reply_handler.is_reply_to_user_condition(msg, ignore_slash=True))
+async def done(msg: HMessage):
+    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}")
+    if not reply_to_chat_data:
+        print("Errrorors")
+        return
+
+    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text or msg.reply_to_message.caption, searchAll=True)
+    out_res = ssh_utils.close()
+    await bot.reply_to(msg, _("ssh.done", msg.lang)+out_res)
+
+    user_data = await bot.get_user_data(reply_to_chat_data['user_id'], reply_to_chat_data['chat_id'])
+    target_chat_lang = user_data.get('lang', 'en')
+
+    caption = f"""[ ](https://hiddify.com/reply_to_us/?chat={msg.chat_id}&msg={msg.message_id})
+{_("chat.reply_insrtuction",target_chat_lang)}
+=====
+{_("ssh.done", target_chat_lang)}"""
+    await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
+
+
+@bot.message_handler(text_startswith="/check", func=lambda msg: reply_handler.is_reply_to_user_condition(msg, ignore_slash=True))
+async def check(msg: HMessage):
+    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}")
+    if not reply_to_chat_data:
+        print("Errrorors")
+        return
+
+    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text or msg.reply_to_message.caption, searchAll=True)
+    out_res = ssh_utils.test_ssh_connection(ssh_info)
+    await bot.reply_to(msg, out_res, parse_mode="markdown")
 
 
 @bot.message_handler(text_startswith="/get_ssh_link")
@@ -88,9 +120,18 @@ async def ssh_received_comment(msg: HMessage):
     # print(msgtxt)
     if msg.text:
         new_message = await bot.send_message(ssh_target_chat_id, msgtxt, parse_mode='markdown')
-
     else:
         new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdown')
+    try:
+        await bot.set_my_commands(types.BotCommandScopeChat(ssh_target_chat_id), commands=[
+            types.BotCommand("/get_link", "get_link to this topic from bot"),
+            types.BotCommand("/get_ssh_link", "get_all_ssh_link"),
+            types.BotCommand("/check", "check server info"),
+            types.BotCommand("/done", "close ssh connection"),
+        ],)
+    except Exception as e:
+        print(e)
+        pass
 
     # data['SSH_info_comment'] = message
     # new_message=await bot.forward_message(-1001834220158,from_chat_id=message.chat.id,message_id=message.message_id)
@@ -98,4 +139,4 @@ async def ssh_received_comment(msg: HMessage):
 
     # new_message = await bot.send_message(-1001834220158, msgtxt, parse_mode='markdown')
 
-    await bot.send_message(msg.chat.id, _("ssh.remove_permission", msg.lang, public_key=ssh_utils.SSH_PUB_STR), parse_mode='markdown')
+    await bot.send_message(msg.chat.id, _("ssh.remove_permission", msg.lang, parse_mode='markdown')
