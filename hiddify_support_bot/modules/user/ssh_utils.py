@@ -3,12 +3,13 @@ import asyncssh
 
 
 def get_public_key():
-    with open(SSH_PUB_PATH)  as f:
+    with open(SSH_PUB_PATH) as f:
         return f.readline()
-SSH_PK_PATH="./hiddify_support.key"
-SSH_PUB_PATH=SSH_PK_PATH+".pub"
-SSH_PUB_STR=get_public_key()
 
+
+SSH_PK_PATH = "./hiddify_support.key"
+SSH_PUB_PATH = SSH_PK_PATH+".pub"
+SSH_PUB_STR = get_public_key()
 
 
 async def test_ssh_connection(ssh_info):
@@ -20,7 +21,8 @@ async def test_ssh_connection(ssh_info):
             ssh_info["host"], port=ssh_info["port"], username=ssh_info["user"], client_keys=[SSH_PK_PATH], known_hosts=None, connect_timeout=2
         ) as conn:
             # result = await conn.run("pip3 freeze | grep hiddifypanel | awk -F ' == ' '{ print $2 }'")
-            result=await conn.run("cat /opt/hiddify-manager/VERSION")
+            result = await conn.run("cat /opt/hiddify-manager/VERSION")
+            result += "`" + await conn.run("cat /opt/hiddify-manager/status.sh")+"`"
             out = f"{result.stdout}  {result.stderr}".strip()
             print("SUCCESS")
             return f'"{out}"'
