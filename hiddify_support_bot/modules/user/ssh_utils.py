@@ -24,7 +24,8 @@ async def test_ssh_connection(ssh_info):
             result = await conn.run("cat /opt/hiddify-manager/VERSION")
             out = f"{result.stdout}  {result.stderr}".strip()
             try:
-                out += "```bash\n" + await conn.run("/opt/hiddify-manager/status.sh")+"\n```"
+                status = await conn.run("/opt/hiddify-manager/status.sh")
+                out += f"```bash\n{status.stdout}\n{status.stderr}```"
             except Exception as e:
                 out += (f"Error: {e}")
             print("SUCCESS")
