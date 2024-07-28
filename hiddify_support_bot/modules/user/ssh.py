@@ -32,7 +32,7 @@ async def done(msg: HMessage):
         return
 
     ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text or msg.reply_to_message.caption, searchAll=True)
-    out_res = await ssh_utils.close_permission()
+    out_res = await ssh_utils.close_permission(ssh_info)
     await bot.reply_to(msg, _("ssh.done", msg.lang)+out_res)
 
     user_data = await bot.get_user_data(reply_to_chat_data['user_id'], reply_to_chat_data['chat_id'])
