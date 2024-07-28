@@ -32,7 +32,7 @@ async def done(msg: HMessage):
         return
 
     ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text or msg.reply_to_message.caption, searchAll=True)
-    out_res = ssh_utils.close()
+    out_res = await ssh_utils.close_permission()
     await bot.reply_to(msg, _("ssh.done", msg.lang)+out_res)
 
     user_data = await bot.get_user_data(reply_to_chat_data['user_id'], reply_to_chat_data['chat_id'])
@@ -53,7 +53,7 @@ async def check(msg: HMessage):
         return
 
     ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text or msg.reply_to_message.caption, searchAll=True)
-    out_res = ssh_utils.test_ssh_connection(ssh_info)
+    out_res = await ssh_utils.test_ssh_connection(ssh_info)
     await bot.reply_to(msg, out_res, parse_mode="markdown")
 
 
@@ -130,4 +130,4 @@ async def ssh_received_comment(msg: HMessage):
 
     # new_message = await bot.send_message(-1001834220158, msgtxt, parse_mode='markdown')
 
-    await bot.send_message(msg.chat.id, _("ssh.remove_permission", msg.lang, parse_mode='markdown'))
+    await bot.send_message(msg.chat.id, _("ssh.remove_permission", msg.lang, public_key=ssh_utils.SSH_PUB_STR), parse_mode='markdown')

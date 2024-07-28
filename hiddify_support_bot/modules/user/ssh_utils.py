@@ -4,9 +4,8 @@ import asyncssh
 
 
 def get_public_key():
-    pass
-    # with open(SSH_PUB_PATH) as f:
-    #     return f.readline().strip()
+    with open(SSH_PUB_PATH) as f:
+        return f.readline().strip()
 
 
 SSH_PK_PATH = "./hiddify_support.key"
@@ -35,7 +34,7 @@ async def test_ssh_connection(ssh_info):
             except Exception as e:
                 out += (f"Error: {e}")
             print("SUCCESS")
-            return f'"{out}"'
+            return f'{out}'
         return "WTF?"
     except Exception as e:
         print(f"Error: {e}")
