@@ -12,26 +12,6 @@ from io import StringIO
 from urllib.parse import urlparse, parse_qs
 
 
-@bot.message_handler(text_startswith="/remove", func=is_reply_to_user_condition_ignore_slash)
-async def remove(msg: HMessage):
-    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}")
-    if not reply_to_chat_data:
-        print("Errrorors")
-        return
-
-    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text or msg.reply_to_message.caption, searchAll=True)
-    out_res = await ssh_utils.close_permission(ssh_info)
-
-    await bot.send_message(msg.chat_id, {_("chat.removed", msg.lang)}, reply_parameters=types.ReplyParameters(msg.reply_to_message.id), parse_mode='markdown')
-    user_data = await bot.get_user_data(reply_to_chat_data['user_id'], reply_to_chat_data['chat_id'])
-    target_chat_lang = user_data.get('lang', 'en')
-    caption = f"""[ ](https://hiddify.com/reply_to_us/?chat={msg.chat_id}&msg={msg.message_id})
-{_("chat.removed", target_chat_lang)}"""
-    await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=types.ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
-
-    await bot.delete_message(msg.reply_to_message.sender_chat.id, msg.reply_to_message.id)
-
-
 async def is_reply_to_us_condition(msg: HMessage, ignore_slash=False):
     if not msg or not msg.chat or not msg.from_user:
         return False
@@ -132,3 +112,23 @@ async def reply_to_user(msg: HMessage):
     else:
         await bot.copy_message(reply_to_chat_data['chat_id'], msg.chat.id,  msg.id, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), caption=caption, parse_mode='markdown')
         await bot.reply_to(msg, _("chat.reply_sent_to_user", msg.lang), parse_mode='markdown')
+
+
+@bot.message_handler(text_startswith="/remove", func=is_reply_to_user_condition_ignore_slash)
+async def remove(msg: HMessage):
+    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}")
+    if not reply_to_chat_data:
+        print("Errrorors")
+        return
+
+    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text or msg.reply_to_message.caption, searchAll=True)
+    out_res = await ssh_utils.close_permission(ssh_info)
+
+    await bot.send_message(msg.chat_id, {_("chat.removed", msg.lang)}, reply_parameters=types.ReplyParameters(msg.reply_to_message.id), parse_mode='markdown')
+    user_data = await bot.get_user_data(reply_to_chat_data['user_id'], reply_to_chat_data['chat_id'])
+    target_chat_lang = user_data.get('lang', 'en')
+    caption = f"""[ ](https://hiddify.com/reply_to_us/?chat={msg.chat_id}&msg={msg.message_id})
+{_("chat.removed", target_chat_lang)}"""
+    await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=types.ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
+
+    await bot.delete_message(msg.reply_to_message.sender_chat.id, msg.reply_to_message.id)
