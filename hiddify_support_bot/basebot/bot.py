@@ -56,6 +56,7 @@ async def def_action():
         await bot.set_my_commands(scope=types.BotCommandScopeAllGroupChats(), commands=[
             types.BotCommand("/check", "check server info"),
             types.BotCommand("/done", "close ssh connection"),
+            types.BotCommand("/remove", "remove conversation and close ssh connection"),
             types.BotCommand("/welcome", "set welcome message for this topic"),
             types.BotCommand("/get_link", "get_link to this topic from bot"),
             types.BotCommand("/get_ssh_link", "get_all_ssh_link"),
