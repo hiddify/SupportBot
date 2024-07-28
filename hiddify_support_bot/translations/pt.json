@@ -1,0 +1,24 @@
+{
+    "ssh": {
+        "welcome": "Se houver um erro crítico, por exemplo o painel não carrega, informe aqui com informações de SSH.",
+        "add_permission": "Execute o seguinte comando e envie suas informações ssh.<inlang-LineFeed>\n`echo '${public_key}'&gt;&gt;~/.ssh/authorized_keys`",
+        "remove_permission": "A qualquer momento, você pode remover o acesso usando o seguinte código<inlang-LineFeed>\n`sed -i '/${public_key}/d' ~/.ssh/authorized_keys`",
+        "send_ssh": "Em seguida, envie as informações do ssh. por exemplo,\n`ssh root@ip`\nou\n`ssh raiz@ip -p 22`",
+        "connection_failed": "⚠️ Não conseguimos nos conectar ao seu servidor. Parece que você não executou o passo 1️⃣.",
+        "connection_success": "As informações SSH estão corretas.\n${panel_version}\nAgora envie uma descrição do seu problema em uma mensagem.",
+        "finish": "Obrigado pela sua mensagem."
+    },
+    "chat": {
+        "reply_insrtuction": "Você pode responder respondendo a esta mensagem.",
+        "reply_sent_to_user": "Sua mensagem foi enviada!",
+        "cancel": "Cancelado! Voltando ao menu principal",
+        "reply": "Você pode responder respondendo a esta mensagem. "
+    },
+    "actions": {
+        "setwelcome_invalid": "Selecione uma mensagem correta",
+        "setwelcome_success": "Definido com sucesso!"
+    },
+    "contribute": {
+        "invalid": "Pedido inválido!"
+    }
+}

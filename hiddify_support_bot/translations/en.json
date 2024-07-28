@@ -10,10 +10,14 @@
         "done": "Your case is done! we remove the permission to your server."
     },
     "chat": {
-        "reply_insrtuction": "You can reply by replying to this message.",
+        "reply_insrtuction": "You can answer by replying to this message.",
         "reply_sent_to_user": "Your message sent!",
         "cancel": "Canceled! Returning to main menu",
+
+        "reply": "You can answer by replying to this message. "
+
         "removed":"Your case has been removed! if you have any other issue call us again with a new case"
+
     },
     "actions": {
         "setwelcome_invalid": "Please select a correct message",
