@@ -1,6 +1,7 @@
 import logging
 import os
 import traceback
+import asyncio
 from telebot.async_telebot import logger, ExceptionHandler, types
 
 
@@ -63,4 +64,4 @@ async def def_action():
         print(e)
     pass
 
-asyncio.run(def_action)
+asyncio.run(def_action())
