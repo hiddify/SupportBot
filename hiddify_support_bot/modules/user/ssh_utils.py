@@ -30,7 +30,7 @@ async def test_ssh_connection(ssh_info):
             out = f"{result.stdout}  {result.stderr}".strip()
             try:
                 status = await conn.run("/opt/hiddify-manager/status.sh")
-                out += f"```bash\n{ansi_escape_pattern.sub('', status.stdout)}\n{status.stderr}```"
+                out += f"\n```bash\n{ansi_escape_pattern.sub('', status.stdout)}\n{status.stderr}```"
             except Exception as e:
                 out += (f"Error: {e}")
             print("SUCCESS")
