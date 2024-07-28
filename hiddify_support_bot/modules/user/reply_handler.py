@@ -15,13 +15,13 @@ import copy
 
 @bot.message_handler(func=lambda msg: msg.sender_chat)
 async def main_message_from_channel(msg: HMessage):
-    print(msg)
+    # print(msg)
     newmsg = copy.deepcopy(msg)
     newmsg.reply_to_message = msg
     newmsg.main_message = msg
     newmsg.text = ""
     await is_reply_to_user_condition(newmsg)
-    await reply_to_user(newmsg)
+    await reply_to_user(newmsg, add_reply_text=False)
 
 
 async def is_reply_to_us_condition(msg: HMessage, ignore_slash=False):
@@ -69,6 +69,7 @@ async def reply_to_us(msg: HMessage):
         a = await bot.copy_message(reply_to['chat_id'], msg.chat.id,  msg.id, caption=caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown',)
     else:
         await bot.send_message(reply_to['chat_id'], caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown')
+    await bot.reply_to(msg, f'{msg_info}{_("chat.reply_sent_to_user", msg.lang)}', parse_mode='markdown')
 
 
 async def is_reply_to_user_condition_ignore_slash(msg: HMessage):
@@ -108,7 +109,7 @@ async def is_reply_to_user_condition(msg: HMessage, ignore_slash=False):
 @bot.message_handler(func=is_reply_to_user_condition,
                      content_types=['audio', 'photo', 'voice', 'video', 'document',
                                     'text', 'location', 'contact', 'sticker'])
-async def reply_to_user(msg: HMessage):
+async def reply_to_user(msg: HMessage, add_reply_text=True):
     reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.main_message.id}")
     if not reply_to_chat_data:
         print("Errrorors")
@@ -125,7 +126,8 @@ async def reply_to_user(msg: HMessage):
     else:
         await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
     msg_info = f"""[ ](https://hiddify.com/reply_to_user/?chat={reply_to_chat_data['chat_id']}&user={reply_to_chat_data['user_id']}&msg={reply_to_chat_data['msg_id']})"""
-    await bot.reply_to(msg, f'{msg_info}{_("chat.reply_sent_to_user", msg.lang)}', parse_mode='markdown')
+    if add_reply_text:
+        await bot.reply_to(msg, f'{msg_info}{_("chat.reply_sent_to_user", msg.lang)}', parse_mode='markdown')
 
 
 @bot.message_handler(text_startswith="/remove", func=is_reply_to_user_condition_ignore_slash)
