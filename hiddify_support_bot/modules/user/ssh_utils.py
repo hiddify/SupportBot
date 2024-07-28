@@ -5,7 +5,7 @@ import asyncssh
 
 def get_public_key():
     with open(SSH_PUB_PATH) as f:
-        return f.readline()
+        return f.readline().strip()
 
 
 SSH_PK_PATH = "./hiddify_support.key"
