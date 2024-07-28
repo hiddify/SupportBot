@@ -122,16 +122,7 @@ async def ssh_received_comment(msg: HMessage):
         new_message = await bot.send_message(ssh_target_chat_id, msgtxt, parse_mode='markdown')
     else:
         new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdown')
-    try:
-        await bot.set_my_commands(types.BotCommandScopeChat(ssh_target_chat_id), commands=[
-            types.BotCommand("/get_link", "get_link to this topic from bot"),
-            types.BotCommand("/get_ssh_link", "get_all_ssh_link"),
-            types.BotCommand("/check", "check server info"),
-            types.BotCommand("/done", "close ssh connection"),
-        ],)
-    except Exception as e:
-        print(e)
-        pass
+    
 
     # data['SSH_info_comment'] = message
     # new_message=await bot.forward_message(-1001834220158,from_chat_id=message.chat.id,message_id=message.message_id)
@@ -139,4 +130,4 @@ async def ssh_received_comment(msg: HMessage):
 
     # new_message = await bot.send_message(-1001834220158, msgtxt, parse_mode='markdown')
 
-    await bot.send_message(msg.chat.id, _("ssh.remove_permission", msg.lang, parse_mode='markdown')
+    await bot.send_message(msg.chat.id, _("ssh.remove_permission", msg.lang, parse_mode='markdown'))
