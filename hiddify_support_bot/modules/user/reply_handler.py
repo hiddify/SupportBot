@@ -60,7 +60,7 @@ async def reply_to_us(msg: HMessage):
 
 
 async def is_reply_to_user_condition_ignore_slash(msg: HMessage):
-    return is_reply_to_user_condition(msg, ignore_slash=True)
+    return await is_reply_to_user_condition(msg, ignore_slash=True)
 
 
 async def is_reply_to_user_condition(msg: HMessage, ignore_slash=False):
