@@ -133,4 +133,4 @@ async def remove(msg: HMessage):
 {_("chat.removed", target_chat_lang)}"""
     await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=types.ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
 
-    await bot.delete_message(msg.main_message.chat_id, msg.main_message.id)
+    await bot.delete_message(msg.main_message.chat.id, msg.main_message.id)
