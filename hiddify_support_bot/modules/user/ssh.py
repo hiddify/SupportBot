@@ -23,7 +23,8 @@ SSH_HOST = os.environ.get("SSH_HOST")
 #     #     return re.sub(REFACTOR_REGEX, lambda t: "\\"+t.group(), k)
 #     return k
 
-@bot.message_handler(text_startswith="/done", func=lambda msg: reply_handler.is_reply_to_user_condition(msg, ignore_slash=True))
+
+@bot.message_handler(text_startswith="/done", func=reply_handler.is_reply_to_user_condition_ignore_slash)
 async def done(msg: HMessage):
     reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}")
     if not reply_to_chat_data:
@@ -44,7 +45,7 @@ async def done(msg: HMessage):
     await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
 
 
-@bot.message_handler(text_startswith="/check", func=lambda msg: reply_handler.is_reply_to_user_condition(msg, ignore_slash=True))
+@bot.message_handler(text_startswith="/check", func=reply_handler.is_reply_to_user_condition_ignore_slash)
 async def check(msg: HMessage):
     reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}")
     if not reply_to_chat_data:
@@ -122,7 +123,6 @@ async def ssh_received_comment(msg: HMessage):
         new_message = await bot.send_message(ssh_target_chat_id, msgtxt, parse_mode='markdown')
     else:
         new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdown')
-    
 
     # data['SSH_info_comment'] = message
     # new_message=await bot.forward_message(-1001834220158,from_chat_id=message.chat.id,message_id=message.message_id)

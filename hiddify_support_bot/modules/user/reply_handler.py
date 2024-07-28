@@ -59,6 +59,10 @@ async def reply_to_us(msg: HMessage):
         await bot.copy_message(reply_to['chat_id'], msg.chat.id,  msg.message_id, caption=caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown',)
 
 
+async def is_reply_to_user_condition_ignore_slash(msg: HMessage):
+    return is_reply_to_user_condition(msg: HMessage, ignore_slash=True):
+    
+
 async def is_reply_to_user_condition(msg: HMessage, ignore_slash=False):
     if not msg:
         return False
