@@ -69,6 +69,7 @@ async def reply_to_us(msg: HMessage):
         a = await bot.copy_message(reply_to['chat_id'], msg.chat.id,  msg.id, caption=caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown',)
     else:
         await bot.send_message(reply_to['chat_id'], caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown')
+    msg_info = f"""[ ](https://hiddify.com/reply_to_us/?chat={reply_to['chat_id']}&msg={reply_to['msg_id']})"""
     await bot.reply_to(msg, f'{msg_info}{_("chat.reply_sent_to_user", msg.lang)}', parse_mode='markdown')
 
 
