@@ -29,6 +29,6 @@ class DataStorage:
         await self.bot.add_user_data(self.user_id, self.chat_id, **kwargs)
 
     async def remove(self, k):
-        async with self.bot.retrieve_data(user_id, chat_id) as data:
+        async with self.bot.retrieve_data(self.user_id, self.chat_id) as data:
             if 'k' in data:
                 del data['k']
