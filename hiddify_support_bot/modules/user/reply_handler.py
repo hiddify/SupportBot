@@ -12,7 +12,7 @@ from io import StringIO
 from urllib.parse import urlparse, parse_qs
 
 
-@bot.message_handler(text_startswith="/remove", func=reply_handler.is_reply_to_user_condition_ignore_slash)
+@bot.message_handler(text_startswith="/remove", func=is_reply_to_user_condition_ignore_slash)
 async def remove(msg: HMessage):
     reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}")
     if not reply_to_chat_data:
