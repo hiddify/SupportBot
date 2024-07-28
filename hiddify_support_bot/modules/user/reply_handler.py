@@ -53,8 +53,8 @@ async def reply_to_us(msg: HMessage):
 {msg.text}
         """
     # await bot.copy_message(chat_id, msg.chat.id,  msg.message_id)
-    if msg.caption:
-        await bot.copy_message(reply_to['chat_id'], msg.chat.id,  msg.message_id, caption=caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown',)
+    if msg.content_type != 'text':
+        a = await bot.copy_message(reply_to['chat_id'], msg.chat.id,  msg.id, caption=caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown',)
     else:
         await bot.send_message(reply_to['chat_id'], caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown')
 
@@ -108,7 +108,7 @@ async def reply_to_user(msg: HMessage):
 {_("chat.reply_insrtuction",target_chat_lang)}
 =====
 {msg.text}"""
-    if msg.caption:
+    if msg.content_type != 'text':
         await bot.copy_message(reply_to_chat_data['chat_id'], msg.chat.id,  msg.id, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), caption=caption, parse_mode='markdown')
     else:
         await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')

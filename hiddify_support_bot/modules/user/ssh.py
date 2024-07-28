@@ -120,7 +120,7 @@ async def ssh_received_comment(msg: HMessage):
     ssh_target_chat_id = await msg.db.get('ssh_target_chat_id', -1001834220158)
     # print(msgtxt)
 
-    if msg.caption:
+    if msg.content_type != 'text':
         new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdown')
     else:
         new_message = await bot.send_message(ssh_target_chat_id, msgtxt, parse_mode='markdown')
