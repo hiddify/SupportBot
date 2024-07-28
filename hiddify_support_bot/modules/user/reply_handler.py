@@ -25,7 +25,7 @@ async def is_reply_to_us_condition(msg: HMessage, ignore_slash=False):
         return False
 
     try:
-        url = urlparse(msg.reply_to_message.entities[0].url)
+        url = urlparse(msg.main_message.entities[0].url)
         query_params = parse_qs(url.query)
         if url.path == '/reply_to_us/':
             message_id = int(query_params.get("msg")[0])
@@ -74,17 +74,18 @@ async def is_reply_to_user_condition(msg: HMessage, ignore_slash=False):
         return False
     if not ignore_slash and msg.text.startswith("/"):
         return False
-    if await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}"):
+    if await msg.db.get(f"chat_data_of_+{msg.main_message.id}"):
         return True
     try:
-        url = urlparse(msg.reply_to_message.entities[0].url)
+
+        url = urlparse(msg.main_message.entities[0].url)
         query_params = parse_qs(url.query)
         if url.path == '/reply_to_user/':
             message_id = int(query_params.get("msg")[0])
             chat_id = int(query_params.get("chat")[0])
             user_id = int(query_params.get("user")[0])
 
-            await msg.db.set(f"chat_data_of_+{msg.reply_to_message.id}", {"msg_id": message_id, "chat_id": chat_id, "user_id": user_id})
+            await msg.db.set(f"chat_data_of_+{msg.main_message.id}", {"msg_id": message_id, "chat_id": chat_id, "user_id": user_id})
             return True
     except:
         pass
@@ -96,7 +97,7 @@ async def is_reply_to_user_condition(msg: HMessage, ignore_slash=False):
                      content_types=['audio', 'photo', 'voice', 'video', 'document',
                                     'text', 'location', 'contact', 'sticker'])
 async def reply_to_user(msg: HMessage):
-    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}")
+    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.main_message.id}")
     if not reply_to_chat_data:
         print("Errrorors")
         return
@@ -117,19 +118,19 @@ async def reply_to_user(msg: HMessage):
 
 @bot.message_handler(text_startswith="/remove", func=is_reply_to_user_condition_ignore_slash)
 async def remove(msg: HMessage):
-    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}")
+    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.main_message.id}")
     if not reply_to_chat_data:
         print("Errrorors")
         return
 
-    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text, searchAll=True)
+    ssh_info = ssh_utils.get_ssh_info(msg.main_message.text, searchAll=True)
     out_res = await ssh_utils.close_permission(ssh_info)
 
-    await bot.send_message(msg.chat_id, {_("chat.removed", msg.lang)}, reply_parameters=types.ReplyParameters(msg.reply_to_message.id), parse_mode='markdown')
+    await bot.send_message(msg.chat_id, {_("chat.removed", msg.lang)}, reply_parameters=types.ReplyParameters(msg.main_message.id), parse_mode='markdown')
     user_data = await bot.get_user_data(reply_to_chat_data['user_id'], reply_to_chat_data['chat_id'])
     target_chat_lang = user_data.get('lang', 'en')
     caption = f"""[ ](https://hiddify.com/reply_to_us/?chat={msg.chat_id}&msg={msg.message_id})
 {_("chat.removed", target_chat_lang)}"""
     await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=types.ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
 
-    await bot.delete_message(msg.reply_to_message.sender_chat.id, msg.reply_to_message.id)
+    await bot.delete_message(msg.main_message.chat_id, msg.main_message.id)

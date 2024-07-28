@@ -26,15 +26,15 @@ SSH_HOST = os.environ.get("SSH_HOST")
 
 @bot.message_handler(text_startswith="/done", func=reply_handler.is_reply_to_user_condition_ignore_slash)
 async def done(msg: HMessage):
-    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}")
+    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.main_message.id}")
     if not reply_to_chat_data:
         print("Errrorors")
         return
 
-    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text, searchAll=True)
+    ssh_info = ssh_utils.get_ssh_info(msg.main_message.text, searchAll=True)
     out_res = await ssh_utils.close_permission(ssh_info)
 
-    await bot.send_message(msg.chat_id, _("ssh.done", msg.lang)+out_res, reply_parameters=types.ReplyParameters(msg.reply_to_message.id), parse_mode='markdown')
+    await bot.send_message(msg.chat_id, _("ssh.done", msg.lang)+out_res, reply_parameters=types.ReplyParameters(msg.main_message.id), parse_mode='markdown')
     user_data = await bot.get_user_data(reply_to_chat_data['user_id'], reply_to_chat_data['chat_id'])
     target_chat_lang = user_data.get('lang', 'en')
 
@@ -47,24 +47,24 @@ async def done(msg: HMessage):
 
 @bot.message_handler(text_startswith="/check", func=reply_handler.is_reply_to_user_condition_ignore_slash)
 async def check(msg: HMessage):
-    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.reply_to_message.id}")
+    reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.main_message.id}")
     if not reply_to_chat_data:
         print("Errrorors")
         return
 
-    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text, searchAll=True)
+    ssh_info = ssh_utils.get_ssh_info(msg.main_message.text, searchAll=True)
     out_res = await ssh_utils.test_ssh_connection(ssh_info)
-    await bot.send_message(msg.chat_id, out_res, reply_parameters=types.ReplyParameters(msg.reply_to_message.id), parse_mode='markdown')
+    await bot.send_message(msg.chat_id, out_res, reply_parameters=types.ReplyParameters(msg.main_message.id), parse_mode='markdown')
 
 
 @bot.message_handler(text_startswith="/get_ssh_link")
 async def get_ssh_link(msg: HMessage):
     langs = ['en', 'fa']
     bot_username = (await bot.get_me()).username
-    if not msg.reply_to_message or not msg.reply_to_message.sender_chat:
+    if not msg.main_message or not msg.main_message.sender_chat:
         await bot.reply_to(msg, "error!e12")
         return
-    cid = msg.reply_to_message.sender_chat.id
+    cid = msg.main_message.sender_chat.id
     for lang in langs:
         sp = start_param.encode("ssh", {'cid': cid, 'lang': lang})
         txt = f"{lang}\n\nhttps://t.me/{bot_username}?start={sp}"

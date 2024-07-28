@@ -62,9 +62,12 @@ class Middleware(asyncio_handler_backends.BaseMiddleware):
             deflang = base.from_user.language_code if base.from_user else "fa"
 
         if isinstance(base, types.Message):
-            base.text = getattr(base, "caption") or getattr(base, "text") or ""
-            if base.reply_to_message:
-                base.reply_to_message.text = getattr(base.reply_to_message, "caption") or getattr(base.reply_to_message, "text") or ""
+            reply_msg = base
+            while reply_msg:
+                reply_msg.text = getattr(reply_msg, "caption") or getattr(reply_msg, "text") or ""
+                reply_msg.entities = getattr(reply_msg, "caption_entities") or getattr(reply_msg, "entities") or []
+                base.main_message = reply_msg
+                reply_msg = reply_msg.reply_to_message
         base.chat_id = chat_id
         base.user_id = user_id
         # data['lang']="en"

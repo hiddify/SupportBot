@@ -12,6 +12,7 @@ class BaseHMessage:
 
 
 class HMessage(types.Message, BaseHMessage):
+    main_message: types.Message
     pass
 
 
