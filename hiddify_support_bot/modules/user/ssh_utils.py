@@ -44,19 +44,22 @@ async def test_ssh_connection(ssh_info):
 def get_ssh_info(txt, searchAll=False):
     import re
 
-    pattern = r"(?:ssh\s+)?(?:(?P<user>\w+)@(?P<host>[^\s@]+))?(?:\s+-p\s+(?P<port>\d+))?\s*"
+    pattern = r"(?:ssh\s+)(?:(?P<user>\w+)@(?P<host>[^\s@]+))?(?:\s+-p\s+(?P<port>\d+))?\s*"
     if searchAll:
+        pattern = f"(.*){pattern}.*"
+    else:
         pattern = f"^{pattern}$"
-    match = re.match(pattern, txt)
 
-    if match:
-        groups = match.groupdict()
-        try:
-            port = int(groups.get("port", "22"))
-        except:
-            port = 22
-        return {"user": groups["user"], "host": groups["host"], "port": port}
-    return None
+    match = re.match(pattern, txt.replace("\n", " "))
+    if not match:
+        return None
+
+    groups = match.groupdict()
+    try:
+        port = int(groups.get("port", "22"))
+    except:
+        port = 22
+    return {"user": groups["user"], "host": groups["host"], "port": port}
 
 
 async def close_permission(ssh_info):
