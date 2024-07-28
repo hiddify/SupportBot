@@ -119,11 +119,11 @@ async def ssh_received_comment(msg: HMessage):
     '''
     ssh_target_chat_id = await msg.db.get('ssh_target_chat_id', -1001834220158)
     # print(msgtxt)
-    new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdown')
-    # if msg.text:
-    #     new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdown')
-    # else:
-    #     new_message = await bot.send_message(ssh_target_chat_id, msgtxt, parse_mode='markdown')
+
+    if msg.caption:
+        new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdown')
+    else:
+        new_message = await bot.send_message(ssh_target_chat_id, msgtxt, parse_mode='markdown')
 
     # data['SSH_info_comment'] = message
     # new_message=await bot.forward_message(-1001834220158,from_chat_id=message.chat.id,message_id=message.message_id)
