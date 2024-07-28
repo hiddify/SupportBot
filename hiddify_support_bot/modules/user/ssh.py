@@ -108,8 +108,9 @@ async def ssh_received(msg: HMessage):
 @bot.step_handler()
 async def ssh_received_comment(msg: HMessage):
     ssh_info = await msg.db['SSH_info']
-    panel_version = await msg.db['panel_version']
-
+    panel_version = (await msg.db['panel_version'] or "").split("\n")[0]
+    await msg.db.remove('panel_version')
+    await msg.db.remove('SSH_info')
     msgtxt = f'''[ ](https://hiddify.com/reply_to_user/?chat={msg.chat.id}&user={msg.from_user.id}&msg={msg.id})
     [{msg.from_user.first_name or ""} {msg.from_user.last_name or ""}](tg://user?id={msg.from_user.id}) [user:](@{msg.from_user.username})  in {msg.chat.title}
     {panel_version}

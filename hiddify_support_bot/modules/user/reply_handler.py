@@ -22,6 +22,8 @@ async def main_message_from_channel(msg: HMessage):
     newmsg.text = ""
     await is_reply_to_user_condition(newmsg)
     await reply_to_user(newmsg, add_reply_text=False)
+    from .ssh import check
+    await check(newmsg)
 
 
 async def is_reply_to_us_condition(msg: HMessage, ignore_slash=False):
