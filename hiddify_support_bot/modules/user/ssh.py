@@ -31,7 +31,7 @@ async def done(msg: HMessage):
         print("Errrorors")
         return
 
-    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text or msg.reply_to_message.caption, searchAll=True)
+    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text, searchAll=True)
     out_res = await ssh_utils.close_permission(ssh_info)
 
     await bot.send_message(msg.chat_id, _("ssh.done", msg.lang)+out_res, reply_parameters=types.ReplyParameters(msg.reply_to_message.id), parse_mode='markdown')
@@ -52,7 +52,7 @@ async def check(msg: HMessage):
         print("Errrorors")
         return
 
-    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text or msg.reply_to_message.caption, searchAll=True)
+    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text, searchAll=True)
     out_res = await ssh_utils.test_ssh_connection(ssh_info)
     await bot.send_message(msg.chat_id, out_res, reply_parameters=types.ReplyParameters(msg.reply_to_message.id), parse_mode='markdown')
 
@@ -115,14 +115,15 @@ async def ssh_received_comment(msg: HMessage):
     `ssh {ssh_info['user']}@{ssh_info['host']} -p {ssh_info['port']}`
     [SSH Site](https://{SSH_HOST}/?host={ssh_info['host']}&port={ssh_info['port']}&user={ssh_info['user']}&password=support)
 
-    {msg.text or msg.caption}
+    {msg.text}
     '''
     ssh_target_chat_id = await msg.db.get('ssh_target_chat_id', -1001834220158)
     # print(msgtxt)
-    if msg.text:
-        new_message = await bot.send_message(ssh_target_chat_id, msgtxt, parse_mode='markdown')
-    else:
-        new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdown')
+    new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdown')
+    # if msg.text:
+    #     new_message = await bot.copy_message(ssh_target_chat_id, msg.chat_id, msg.id, msgtxt, parse_mode='markdown')
+    # else:
+    #     new_message = await bot.send_message(ssh_target_chat_id, msgtxt, parse_mode='markdown')
 
     # data['SSH_info_comment'] = message
     # new_message=await bot.forward_message(-1001834220158,from_chat_id=message.chat.id,message_id=message.message_id)

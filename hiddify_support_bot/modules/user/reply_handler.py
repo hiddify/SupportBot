@@ -50,13 +50,13 @@ async def reply_to_us(msg: HMessage):
 `{msg.from_user.id}` `{msg.chat.id}` 
 [{msg.from_user.first_name or ""} {msg.from_user.last_name or ""}](tg://user?id={msg.from_user.id})            
 ======
-{msg.text or msg.caption}
+{msg.text}
         """
     # await bot.copy_message(chat_id, msg.chat.id,  msg.message_id)
-    if msg.text:
-        await bot.send_message(reply_to['chat_id'], caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown')
-    else:
-        await bot.copy_message(reply_to['chat_id'], msg.chat.id,  msg.message_id, caption=caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown',)
+    # if msg.caption:
+    await bot.copy_message(reply_to['chat_id'], msg.chat.id,  msg.message_id, caption=caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown',)
+    # else:
+    #     await bot.send_message(reply_to['chat_id'], caption, reply_parameters=ReplyParameters(reply_to['msg_id']), parse_mode='markdown')
 
 
 async def is_reply_to_user_condition_ignore_slash(msg: HMessage):
@@ -106,12 +106,13 @@ async def reply_to_user(msg: HMessage):
     caption = f"""[ ](https://hiddify.com/reply_to_us/?chat={msg.chat_id}&msg={msg.message_id})  
 {_("chat.reply_insrtuction",target_chat_lang)}
 =====
-{msg.text or msg.caption}"""
-    if msg.text:
-        await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
-    else:
-        await bot.copy_message(reply_to_chat_data['chat_id'], msg.chat.id,  msg.id, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), caption=caption, parse_mode='markdown')
-        await bot.reply_to(msg, _("chat.reply_sent_to_user", msg.lang), parse_mode='markdown')
+{msg.text}"""
+    # if msg.caption:
+    await bot.copy_message(reply_to_chat_data['chat_id'], msg.chat.id,  msg.id, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), caption=caption, parse_mode='markdown')
+    # else:
+    #     await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
+
+    await bot.reply_to(msg, _("chat.reply_sent_to_user", msg.lang), parse_mode='markdown')
 
 
 @bot.message_handler(text_startswith="/remove", func=is_reply_to_user_condition_ignore_slash)
@@ -121,7 +122,7 @@ async def remove(msg: HMessage):
         print("Errrorors")
         return
 
-    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text or msg.reply_to_message.caption, searchAll=True)
+    ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text, searchAll=True)
     out_res = await ssh_utils.close_permission(ssh_info)
 
     await bot.send_message(msg.chat_id, {_("chat.removed", msg.lang)}, reply_parameters=types.ReplyParameters(msg.reply_to_message.id), parse_mode='markdown')
