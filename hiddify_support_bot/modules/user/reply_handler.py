@@ -10,6 +10,18 @@ import os
 from . import ssh_utils
 from io import StringIO
 from urllib.parse import urlparse, parse_qs
+import copy
+
+
+@bot.message_handler(func=lambda msg: msg.sender_chat)
+async def main_message_from_channel(msg: HMessage):
+    print(msg)
+    newmsg = copy.deepcopy(msg)
+    newmsg.reply_to_message = msg
+    newmsg.main_message = msg
+    newmsg.text = ""
+    await is_reply_to_user_condition(newmsg)
+    await reply_to_user(newmsg)
 
 
 async def is_reply_to_us_condition(msg: HMessage, ignore_slash=False):

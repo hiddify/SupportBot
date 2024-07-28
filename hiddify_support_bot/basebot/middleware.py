@@ -39,7 +39,7 @@ class Middleware(asyncio_handler_backends.BaseMiddleware):
         ]
 
     async def set_basic_elements(self, obj, data):
-
+        # print(obj)
         user_id = chat_id = deflang = None
         base = obj
         if isinstance(obj, types.CallbackQuery):
@@ -117,8 +117,8 @@ class Middleware(asyncio_handler_backends.BaseMiddleware):
         if isinstance(obj, types.Message):
             if base.chat_id:
                 await self.bot.send_chat_action(base.chat_id, "typing")
-            from hiddify_support_bot.utils import tghelper
-            await tghelper.set_reaction(base)
+            # from hiddify_support_bot.utils import tghelper
+            # await tghelper.set_reaction(base)
 
     async def post_process(self, message, data, exception):
         pass
