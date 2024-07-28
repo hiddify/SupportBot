@@ -118,6 +118,9 @@ async def reply_to_user(msg: HMessage):
 
 @bot.message_handler(text_startswith="/remove", func=is_reply_to_user_condition_ignore_slash)
 async def remove(msg: HMessage):
+    if not msg.main_message.forward_origin:
+        await bot.reply_to(msg, "select the main message")
+        return
     reply_to_chat_data = await msg.db.get(f"chat_data_of_+{msg.main_message.id}")
     if not reply_to_chat_data:
         print("Errrorors")
@@ -133,8 +136,10 @@ async def remove(msg: HMessage):
 {_("chat.removed", target_chat_lang)}"""
     await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=types.ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
 
+    # print(msg.reply_to_message.forward_origin)
+    # print("xxx=====", msg.main_message.forward_origin)
     orig = msg.main_message.forward_origin
-    if orig:
-        await bot.delete_message(orig.chat.id, orig.message_id)
+    # print(orig.chat.id, orig.message_id)
+    await bot.delete_message(orig.chat.id, orig.message_id)
 
     # await bot.delete_message(msg.main_message.chat.id, msg.main_message.id)
