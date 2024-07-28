@@ -2,7 +2,7 @@ import asyncio
 from hiddify_support_bot import bot, HMessage, HCallbackQuery, Role
 from hiddify_support_bot.utils import start_param, tghelper
 import telebot
-from telebot import types
+from telebot.async_telebot import types
 from i18n import t as _
 from . import constants as C
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, ForceReply, ReplyKeyboardRemove, Message
@@ -42,7 +42,7 @@ async def done(msg: HMessage):
 {_("chat.reply_insrtuction",target_chat_lang)}
 =====
 {_("ssh.done", target_chat_lang)}"""
-    await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
+    await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=types.ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
 
 
 @bot.message_handler(text_startswith="/check", func=reply_handler.is_reply_to_user_condition_ignore_slash)
@@ -54,7 +54,7 @@ async def check(msg: HMessage):
 
     ssh_info = ssh_utils.get_ssh_info(msg.reply_to_message.text or msg.reply_to_message.caption, searchAll=True)
     out_res = await ssh_utils.test_ssh_connection(ssh_info)
-    await bot.reply_to(msg, out_res, parse_mode="markdown")
+    await bot.reply_to(msg.reply_to_message.id, out_res, parse_mode="markdown")
 
 
 @bot.message_handler(text_startswith="/get_ssh_link")
