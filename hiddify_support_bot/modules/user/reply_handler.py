@@ -112,8 +112,8 @@ async def reply_to_user(msg: HMessage):
         await bot.copy_message(reply_to_chat_data['chat_id'], msg.chat.id,  msg.id, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), caption=caption, parse_mode='markdown')
     else:
         await bot.send_message(reply_to_chat_data['chat_id'], caption, reply_parameters=ReplyParameters(reply_to_chat_data['msg_id']), parse_mode='markdown')
-
-    await bot.reply_to(msg, _("chat.reply_sent_to_user", msg.lang), parse_mode='markdown')
+    msg_info = f"""[ ](https://hiddify.com/reply_to_user/?chat={reply_to_chat_data['chat_id']}&user={reply_to_chat_data['user_id']}&msg={reply_to_chat_data['msg_id']})"""
+    await bot.reply_to(msg, f'{msg_info}{_("chat.reply_sent_to_user", msg.lang)}', parse_mode='markdown')
 
 
 @bot.message_handler(text_startswith="/remove", func=is_reply_to_user_condition_ignore_slash)

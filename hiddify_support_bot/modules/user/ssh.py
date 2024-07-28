@@ -33,8 +33,8 @@ async def done(msg: HMessage):
 
     ssh_info = ssh_utils.get_ssh_info(msg.main_message.text, searchAll=True)
     out_res = await ssh_utils.close_permission(ssh_info)
-
-    await bot.send_message(msg.chat_id, _("ssh.done", msg.lang)+out_res, reply_parameters=types.ReplyParameters(msg.main_message.id), parse_mode='markdown')
+    msg_info = f"""[ ](https://hiddify.com/reply_to_user/?chat={reply_to_chat_data['chat_id']}&user={reply_to_chat_data['user_id']}&msg={reply_to_chat_data['msg_id']})"""
+    await bot.send_message(msg.chat_id, msg_info + _("ssh.done", msg.lang)+out_res, reply_parameters=types.ReplyParameters(msg.main_message.id), parse_mode='markdown')
     user_data = await bot.get_user_data(reply_to_chat_data['user_id'], reply_to_chat_data['chat_id'])
     target_chat_lang = user_data.get('lang', 'en')
 
@@ -54,7 +54,8 @@ async def check(msg: HMessage):
 
     ssh_info = ssh_utils.get_ssh_info(msg.main_message.text, searchAll=True)
     out_res = await ssh_utils.test_ssh_connection(ssh_info)
-    await bot.send_message(msg.chat_id, out_res, reply_parameters=types.ReplyParameters(msg.main_message.id), parse_mode='markdown')
+    msg_info = f"""[ ](https://hiddify.com/reply_to_user/?chat={reply_to_chat_data['chat_id']}&user={reply_to_chat_data['user_id']}&msg={reply_to_chat_data['msg_id']})"""
+    await bot.send_message(msg.chat_id, f'{msg_info}{out_res}', reply_parameters=types.ReplyParameters(msg.main_message.id), parse_mode='markdown')
 
 
 @bot.message_handler(text_startswith="/get_ssh_link")
