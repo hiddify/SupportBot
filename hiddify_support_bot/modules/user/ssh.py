@@ -109,8 +109,7 @@ async def ssh_received(msg: HMessage):
 async def ssh_received_comment(msg: HMessage):
     ssh_info = await msg.db['SSH_info']
     panel_version = (await msg.db['panel_version'] or "").split("\n")[0]
-    await msg.db.remove('panel_version')
-    await msg.db.remove('SSH_info')
+
     msgtxt = f'''[ ](https://hiddify.com/reply_to_user/?chat={msg.chat.id}&user={msg.from_user.id}&msg={msg.id})
     [{msg.from_user.first_name or ""} {msg.from_user.last_name or ""}](tg://user?id={msg.from_user.id}) [user:](@{msg.from_user.username})  in {msg.chat.title}
     {panel_version}
@@ -134,3 +133,5 @@ async def ssh_received_comment(msg: HMessage):
     # new_message = await bot.send_message(-1001834220158, msgtxt, parse_mode='markdown')
 
     await bot.send_message(msg.chat.id, _("ssh.remove_permission", msg.lang, public_key=ssh_utils.SSH_PUB_STR), parse_mode='markdown')
+    await msg.db.remove('panel_version')
+    await msg.db.remove('SSH_info')
