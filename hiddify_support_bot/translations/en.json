@@ -2,7 +2,7 @@
     "ssh": {
         "welcome": "If there is an critical error, for example the panel does not load, report here with SSH information.",
         "add_permission": "Please run the following command and send your ssh information. \n\n`echo '${public_key}'>>~/.ssh/authorized_keys`",
-        "remove_permission": "At anytime, you can remove the access using the following code\n\nsed -i '/hiddify@assistant/d' ~/.ssh/authorized_keys`",
+        "remove_permission": "At anytime, you can remove the access using the following code\n\n`sed -i '/hiddify@assistant/d' ~/.ssh/authorized_keys`",
         "send_ssh": "Then send the ssh information. e.g.,\n`ssh root@ip`\nor\n`ssh root@ip -p 22`",
         "connection_failed": "⚠️ We can not connect to your server. It seems that you have not executed the step 1️⃣.",
         "connection_success": "SSH info is correct.\n${panel_version}\n Now please send a description of your problem in one message.",
