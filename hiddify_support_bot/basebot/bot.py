@@ -53,7 +53,7 @@ bot.setup_middleware(Middleware(bot))
 
 async def def_action():
     try:
-        bot.set_my_commands(types.BotCommandScopeAllGroupChats(commands=[
+        await bot.set_my_commands(types.BotCommandScopeAllGroupChats(commands=[
             types.BotCommand("/get_link", "get_link to this topic from bot"),
             types.BotCommand("/welcome", "set welcome message for this topic"),
             types.BotCommand("/get_ssh_link", "get_all_ssh_link"),
