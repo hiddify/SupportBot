@@ -44,7 +44,9 @@ async def test_ssh_connection(ssh_info):
 def get_ssh_info(txt, searchAll=False):
     import re
 
-    pattern = r"^(?:ssh\s+)?(?:(?P<user>\w+)@(?P<host>[^\s@]+))?(?:\s+-p\s+(?P<port>\d+))?\s*$"
+    pattern = r"(?:ssh\s+)?(?:(?P<user>\w+)@(?P<host>[^\s@]+))?(?:\s+-p\s+(?P<port>\d+))?\s*"
+    if searchAll:
+        pattern = f"^{pattern}$"
     match = re.match(pattern, txt)
 
     if match:
