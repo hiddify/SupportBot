@@ -118,7 +118,7 @@ async def ssh_received_comment(msg: HMessage):
 =====
     {msg.text}
     '''
-    ssh_target_chat_id = await msg.db.get('ssh_target_chat_id', -1001834220158)
+    ssh_target_chat_id = await msg.db.get('ssh_target_chat_id', -1003963956955)
     # print(msgtxt)
 
     if msg.content_type != 'text':
