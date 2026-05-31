@@ -8,10 +8,11 @@
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "__main__.py",
-            "cwd": "${workspaceFolder}/hiddify_support_bot",
+            "module": "hiddify_support_bot",
+            "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
-            "justMyCode": false
+            "justMyCode": false,
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

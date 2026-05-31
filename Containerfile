@@ -1,5 +1,6 @@
-FROM python:3.10-slim
+FROM python:3.14-slim
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 COPY . /app
 WORKDIR /app
-RUN pip install .
-CMD ["hiddify_support_bot"]
+RUN uv sync --frozen --no-dev --no-editable
+CMD ["uv", "run", "hiddify_support_bot"]

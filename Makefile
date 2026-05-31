@@ -1,6 +1,6 @@
 .ONESHELL:
-ENV_PREFIX=$(shell python -c "if __import__('pathlib').Path('.venv/bin/pip').exists(): print('.venv/bin/')")
-USING_POETRY=$(shell grep "tool.poetry" pyproject.toml && echo "yes")
+UV ?= uv
+ENV_PREFIX=$(shell $(UV) run python -c "print('')" 2>/dev/null && echo "$(UV) run ")
 
 .PHONY: help
 help:             ## Show the help.
@@ -13,39 +13,36 @@ help:             ## Show the help.
 .PHONY: show
 show:             ## Show the current environment.
 	@echo "Current environment:"
-	@if [ "$(USING_POETRY)" ]; then poetry env info && exit; fi
-	@echo "Running using $(ENV_PREFIX)"
-	@$(ENV_PREFIX)python -V
-	@$(ENV_PREFIX)python -m site
+	@$(UV) python list 2>/dev/null || true
+	@$(UV) run python -V
+	@$(UV) run python -m site
 
 .PHONY: install
 install:          ## Install the project in dev mode.
-	@if [ "$(USING_POETRY)" ]; then poetry install && exit; fi
-	@echo "Don't forget to run 'make virtualenv' if you got errors."
-	$(ENV_PREFIX)pip install -e .[test]
+	$(UV) sync
 
 .PHONY: fmt
 fmt:              ## Format code using black & isort.
-	$(ENV_PREFIX)isort hiddify_support_bot/
-	$(ENV_PREFIX)black -l 79 hiddify_support_bot/
-	$(ENV_PREFIX)black -l 79 tests/
+	$(UV) run isort hiddify_support_bot/
+	$(UV) run black -l 79 hiddify_support_bot/
+	$(UV) run black -l 79 tests/
 
 .PHONY: lint
 lint:             ## Run pep8, black, mypy linters.
-	$(ENV_PREFIX)flake8 hiddify_support_bot/
-	$(ENV_PREFIX)black -l 79 --check hiddify_support_bot/
-	$(ENV_PREFIX)black -l 79 --check tests/
-	$(ENV_PREFIX)mypy --ignore-missing-imports hiddify_support_bot/
+	$(UV) run flake8 hiddify_support_bot/
+	$(UV) run black -l 79 --check hiddify_support_bot/
+	$(UV) run black -l 79 --check tests/
+	$(UV) run mypy --ignore-missing-imports hiddify_support_bot/
 
 .PHONY: test
 test: lint        ## Run tests and generate coverage report.
-	$(ENV_PREFIX)pytest -v --cov-config .coveragerc --cov=hiddify_support_bot -l --tb=short --maxfail=1 tests/
-	$(ENV_PREFIX)coverage xml
-	$(ENV_PREFIX)coverage html
+	$(UV) run pytest -v --cov-config .coveragerc --cov=hiddify_support_bot -l --tb=short --maxfail=1 tests/
+	$(UV) run coverage xml
+	$(UV) run coverage html
 
 .PHONY: watch
 watch:            ## Run tests on every change.
-	ls **/**.py | entr $(ENV_PREFIX)pytest -s -vvv -l --tb=long --maxfail=1 tests/
+	ls **/**.py | entr $(UV) run pytest -s -vvv -l --tb=long --maxfail=1 tests/
 
 .PHONY: clean
 clean:            ## Clean unused files.
@@ -64,22 +61,14 @@ clean:            ## Clean unused files.
 	@rm -rf docs/_build
 
 .PHONY: virtualenv
-virtualenv:       ## Create a virtual environment.
-	@if [ "$(USING_POETRY)" ]; then poetry install && exit; fi
-	@echo "creating virtualenv ..."
-	@rm -rf .venv
-	@python3 -m venv .venv
-	@./.venv/bin/pip install -U pip
-	@./.venv/bin/pip install -e .[test]
-	@echo
-	@echo "!!! Please run 'source .venv/bin/activate' to enable the environment !!!"
+virtualenv: install ## Create/sync the uv virtual environment.
 
 .PHONY: release
 release:          ## Create a new tag for release.
 	@echo "WARNING: This operation will create s version tag and push to github"
 	@read -p "Version? (provide the next x.y.z semver) : " TAG
 	@echo "$${TAG}" > hiddify_support_bot/VERSION
-	@$(ENV_PREFIX)gitchangelog > HISTORY.md
+	@$(UV) run gitchangelog > HISTORY.md
 	@git add hiddify_support_bot/VERSION HISTORY.md
 	@git commit -m "release: version $${TAG} 🚀"
 	@echo "creating git tag : $${TAG}"
@@ -90,35 +79,9 @@ release:          ## Create a new tag for release.
 .PHONY: docs
 docs:             ## Build the documentation.
 	@echo "building documentation ..."
-	@$(ENV_PREFIX)mkdocs build
+	@$(UV) run mkdocs build
 	URL="site/index.html"; xdg-open $$URL || sensible-browser $$URL || x-www-browser $$URL || gnome-open $$URL || open $$URL
-
-.PHONY: switch-to-poetry
-switch-to-poetry: ## Switch to poetry package manager.
-	@echo "Switching to poetry ..."
-	@if ! poetry --version > /dev/null; then echo 'poetry is required, install from https://python-poetry.org/'; exit 1; fi
-	@rm -rf .venv
-	@poetry init --no-interaction --name=a_flask_test --author=rochacbruno
-	@echo "" >> pyproject.toml
-	@echo "[tool.poetry.scripts]" >> pyproject.toml
-	@echo "hiddify_support_bot = 'hiddify_support_bot.__main__:main'" >> pyproject.toml
-	@cat requirements.txt | while read in; do poetry add --no-interaction "$${in}"; done
-	@cat requirements-test.txt | while read in; do poetry add --no-interaction "$${in}" --dev; done
-	@poetry install --no-interaction
-	@mkdir -p .github/backup
-	@mv requirements* .github/backup
-	@mv setup.py .github/backup
-	@echo "You have switched to https://python-poetry.org/ package manager."
-	@echo "Please run 'poetry shell' or 'poetry run hiddify_support_bot'"
 
 .PHONY: init
 init:             ## Initialize the project based on an application template.
 	@./.github/init.sh
-
-
-# This project has been generated from rochacbruno/python-project-template
-# __author__ = 'rochacbruno'
-# __repo__ = https://github.com/rochacbruno/python-project-template
-# __sponsor__ = https://github.com/sponsors/rochacbruno/
-
-

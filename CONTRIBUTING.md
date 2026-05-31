@@ -2,9 +2,9 @@
 
 hiddify_support_bot welcomes contributions from the community.
 
-**You need PYTHON3!**
+**You need Python 3.14+ and [uv](https://docs.astral.sh/uv/).**
 
-This instructions are for linux base systems. (Linux, MacOS, BSD, etc.)
+These instructions are for linux base systems. (Linux, MacOS, BSD, etc.)
 ## Setting up your own fork of this repo.
 
 - On github interface click on `Fork` button.
@@ -14,8 +14,8 @@ This instructions are for linux base systems. (Linux, MacOS, BSD, etc.)
 
 ## Setting up your own virtual environment
 
-Run `make virtualenv` to create a virtual environment.
-then activate it with `source .venv/bin/activate`.
+Run `make virtualenv` (or `uv sync`) to create/sync the project virtual environment.
+Use `uv run <command>` to run tools, or activate with `source .venv/bin/activate`.
 
 ## Install the project in develop mode
 
@@ -57,7 +57,7 @@ Ensure your new changes are documented.
 
 This project uses [conventional git commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
 
-Example: `fix(package): update setup.py arguments 🎉` (emojis are fine too)
+Example: `fix(package): update pyproject.toml dependencies 🎉` (emojis are fine too)
 
 ## Push your changes to your fork
 
@@ -87,7 +87,6 @@ clean:            ## Clean unused files.
 virtualenv:       ## Create a virtual environment.
 release:          ## Create a new tag for release.
 docs:             ## Build the documentation.
-switch-to-poetry: ## Switch to poetry package manager.
 init:             ## Initialize the project based on an application template.
 ```
 

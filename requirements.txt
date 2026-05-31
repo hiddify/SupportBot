@@ -1,9 +1,0 @@
-i18nice==0.15.5
-pyTelegramBotAPI==4.21.0
-#git+https://github.com/hiddify-com/pyTelegramBotAPI.git@async_register_next_step_handler#egg=pyTelegramBotAPI
-aiohttp==3.9.5
-asyncio==3.4.3
-python-dotenv==1.0.1
-asyncssh==2.15.0
-cryptography==42.0
-

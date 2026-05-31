@@ -19,9 +19,9 @@ async def main_message_from_channel(msg: HMessage):
     newmsg = copy.deepcopy(msg)
     newmsg.reply_to_message = msg
     newmsg.main_message = msg
-    newmsg.text = ""
+    # newmsg.text = ""
     await is_reply_to_user_condition(newmsg)
-    await reply_to_user(newmsg, add_reply_text=False)
+    await reply_to_user(newmsg, add_reply_text=True)
     from .ssh import check
     await check(newmsg)
 
@@ -93,16 +93,18 @@ async def is_reply_to_user_condition(msg: HMessage, ignore_slash=False):
     if await msg.db.get(f"chat_data_of_+{msg.main_message.id}"):
         return True
     try:
+        for target_msg in [msg.reply_to_message, msg.main_message.reply_to_message, msg.main_message]:
+            if not target_msg or not target_msg.entities:
+                continue
+            url = urlparse(target_msg.entities[0].url)
+            query_params = parse_qs(url.query)
+            if url.path == '/reply_to_user/':
+                message_id = int(query_params.get("msg")[0])
+                chat_id = int(query_params.get("chat")[0])
+                user_id = int(query_params.get("user")[0])
 
-        url = urlparse(msg.main_message.entities[0].url)
-        query_params = parse_qs(url.query)
-        if url.path == '/reply_to_user/':
-            message_id = int(query_params.get("msg")[0])
-            chat_id = int(query_params.get("chat")[0])
-            user_id = int(query_params.get("user")[0])
-
-            await msg.db.set(f"chat_data_of_+{msg.main_message.id}", {"msg_id": message_id, "chat_id": chat_id, "user_id": user_id})
-            return True
+                await msg.db.set(f"chat_data_of_+{msg.main_message.id}", {"msg_id": message_id, "chat_id": chat_id, "user_id": user_id})
+                return True
     except:
         pass
 
