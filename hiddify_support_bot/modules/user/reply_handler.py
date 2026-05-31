@@ -13,15 +13,16 @@ from urllib.parse import urlparse, parse_qs
 import copy
 
 
-@bot.message_handler(func=lambda msg: msg.sender_chat)
+# @bot.message_handler(func=lambda msg: msg.sender_chat and not((msg.text or "").startswith("/")))
+@bot.message_handler(func=lambda msg: msg.sender_chat and "    SSH Site" in ((msg.text or "")))
 async def main_message_from_channel(msg: HMessage):
     # print(msg)
     newmsg = copy.deepcopy(msg)
     newmsg.reply_to_message = msg
     newmsg.main_message = msg
-    # newmsg.text = ""
+    newmsg.text = ""
     await is_reply_to_user_condition(newmsg)
-    await reply_to_user(newmsg, add_reply_text=True)
+    await reply_to_user(newmsg, False)
     from .ssh import check
     await check(newmsg)
 
@@ -121,7 +122,7 @@ async def reply_to_user(msg: HMessage, add_reply_text=True):
         return
     user_data = await bot.get_user_data(reply_to_chat_data['user_id'], reply_to_chat_data['chat_id'])
     target_chat_lang = user_data.get('lang', 'en')
-
+    
     caption = f"""[ ](https://hiddify.com/reply_to_us/?chat={msg.chat_id}&msg={msg.message_id})  
 {_("chat.reply_insrtuction",target_chat_lang)}
 =====
