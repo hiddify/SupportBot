@@ -6,13 +6,15 @@
         "send_ssh": "然后发送 ssh 信息。例如，\n`ssh root@ip`<inlang-LineFeed>或者<inlang-LineFeed>`ssh root@ip -p 22`",
         "connection_failed": "⚠️我们无法连接到您的服务器。看来您还没有执行步骤1️⃣。",
         "connection_success": "SSH 信息正确。\n${面板版本}<inlang-LineFeed>现在请在一条消息中发送您的问题的描述。",
-        "finish": "感谢您的留言。"
+        "finish": "感谢您的留言。",
+        "done": "您的案子已经处理完毕！我们将删除您服务器的权限。"
     },
     "chat": {
         "reply_insrtuction": "您可以通过回复此消息来回答。",
         "reply_sent_to_user": "您的消息已发送！",
         "cancel": "已取消！返回主菜单",
-        "reply": "您可以通过回复此消息来回答。 "
+        "reply": "您可以通过回复此消息来回答。 ",
+        "removed": "您的案件已被删除！如果您有任何其他问题，请再次致电我们以提出新案件"
     },
     "actions": {
         "setwelcome_invalid": "请选择正确的消息",

@@ -6,13 +6,15 @@
         "send_ssh": "Em seguida, envie as informações do ssh. por exemplo,\n`ssh root@ip`\nou\n`ssh raiz@ip -p 22`",
         "connection_failed": "⚠️ Não conseguimos nos conectar ao seu servidor. Parece que você não executou o passo 1️⃣.",
         "connection_success": "As informações SSH estão corretas.\n${panel_version}\nAgora envie uma descrição do seu problema em uma mensagem.",
-        "finish": "Obrigado pela sua mensagem."
+        "finish": "Obrigado pela sua mensagem.",
+        "done": "Seu caso está resolvido! removemos a permissão do seu servidor."
     },
     "chat": {
         "reply_insrtuction": "Você pode responder respondendo a esta mensagem.",
         "reply_sent_to_user": "Sua mensagem foi enviada!",
         "cancel": "Cancelado! Voltando ao menu principal",
-        "reply": "Você pode responder respondendo a esta mensagem. "
+        "reply": "Você pode responder respondendo a esta mensagem. ",
+        "removed": "Seu caso foi removido! se você tiver qualquer outro problema, ligue-nos novamente com um novo caso"
     },
     "actions": {
         "setwelcome_invalid": "Selecione uma mensagem correta",
