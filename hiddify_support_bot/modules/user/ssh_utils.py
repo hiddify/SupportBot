@@ -30,13 +30,17 @@ def _format_result(result: asyncssh.SSHCompletedProcess) -> str:
 
 
 async def test_ssh(host: str,port: int,username: str, key_path: str) -> str:
+    out=""
     async with asyncssh.connect(host,port=port,username=username,client_keys=[key_path],known_hosts=None,connect_timeout=10,encoding="utf-8") as conn:
-        result = await conn.run("cat /opt/hiddify-manager/VERSION", check=False)
-        out = _format_result(result)
-        print(f"VERSION (exit {result.exit_status}):\n{out}\n")
+        try:
+            result = await conn.run("cat /opt/hiddify-manager/VERSION", check=False)
+            out = _format_result(result)
+            print(f"VERSION (exit {result.exit_status}):\n{out}\n")
+        except Exception as e:
+            out+=f'{e}'
+            print(e)
 
         try:
-            status = await conn.run("/opt/hiddify-manager/status.sh", check=False)
             status = await conn.run("hiddify status || bash /opt/hiddify-manager/status.sh",check=False, timeout=30)
             cleaned = ansi_escape_pattern.sub("", _text(status.stdout))
             cleaned = cleaned.replace("                      ", " ")
