@@ -37,6 +37,7 @@ async def test_ssh(host: str,port: int,username: str, key_path: str) -> str:
 
         try:
             status = await conn.run("/opt/hiddify-manager/status.sh", check=False)
+            status = await conn.run("hiddify status || bash /opt/hiddify-manager/status.sh",check=False, timeout=30)
             cleaned = ansi_escape_pattern.sub("", _text(status.stdout))
             cleaned = cleaned.replace("                      ", " ")
             cleaned = cleaned.replace("-----------------------------------", " ")
